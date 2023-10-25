@@ -1,14 +1,17 @@
 import * as React from "react";
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import AuthScreen from './screens/AuthScreen';
 import HomeScreen from './screens/HomeScreen';
 import { StyleSheet, Text, View, Button, Image } from "react-native";
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Ionicons } from "@expo/vector-icons";
 
 const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
 WebBrowser.maybeCompleteAuthSession();
 
 function Navigation() {
@@ -64,9 +67,7 @@ async function handleLogout() {
     <>
     {userInfo ?
         <NavigationContainer>
-          <Stack.Navigator initialRouteName="Auth">
-            <Stack.Screen name="Home" component={HomeScreen} set options={{ headerShown: false }}/>               
-          </Stack.Navigator>
+          <TabGroup />
         </NavigationContainer>
     : (
       <View style={styles.centeredContainer}>
@@ -93,3 +94,29 @@ const styles = StyleSheet.create({
 
 export default Navigation;
 
+function TabGroup() {
+  return (
+      <Tab.Navigator
+        screenOptions={({route}) => ({
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
+            if (route.name === "Home") {
+              iconName = focused ? "home" : "home-outline";
+            } else if (route.name === "Settings") {
+              iconName = focused ? "settings" : "ios-settings-sharp";
+            } else if (route.name === "Notifications") {
+              iconName = focused ? "ios-notifications" : "notifications-outline";
+            }
+            return <Ionicons name={iconName} size={size} color={color} style={{ marginBottom: -1 }}/>;
+          },
+          tabBarActiveTintColor: 'black',
+          tabBarInactiveTintColor: 'gray',
+          tabBarLabel: ""
+        })} 
+      >
+          <Tab.Screen name="Home" component={HomeScreen} />
+          <Tab.Screen name="Notifications" component={HomeScreen} />
+          <Tab.Screen name="Settings" component={HomeScreen} />
+      </Tab.Navigator>
+  )
+}
