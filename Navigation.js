@@ -67,9 +67,6 @@ async function handleLogout() {
     <>
     {userInfo ?
         <NavigationContainer>
-          {/* <Stack.Navigator initialRouteName="Auth">
-            <Stack.Screen name="Home" component={HomeScreen} set options={{ headerShown: false }}/>               
-          </Stack.Navigator> */}
           <TabGroup />
         </NavigationContainer>
     : (
@@ -110,7 +107,7 @@ function TabGroup() {
             } else if (route.name === "Notifications") {
               iconName = focused ? "ios-notifications" : "notifications-outline";
             }
-            return <Ionicons name={iconName} size={size} color={color} style={{ marginBottom: -12 }}/>;
+            return <Ionicons name={iconName} size={size} color={color} style={{ marginBottom: -1 }}/>;
           },
           tabBarActiveTintColor: 'black',
           tabBarInactiveTintColor: 'gray',
