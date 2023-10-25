@@ -8,27 +8,24 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 WebBrowser.maybeCompleteAuthSession();
 
 export default function AuthScreen() {
-    // const [userInfo, setUserInfo] = React.useState(null);
-    const [request, response, promptAsync] = Google.useAuthRequest({
-        androidClientId:
-            "356560269346-l8nhb3lgrdoefj5ga4kkkslh0pstah0a.apps.googleusercontent.com",
-        iosClientId:
-            "356560269346-aj6o16ra0ace2gat2o1hqrp9dnlbit5c.apps.googleusercontent.com",
-        webClientId:
-            "356560269346-8m1hnjk7mpb9cfgg7ip0c83g0jb3ni0c.apps.googleusercontent.com",
-    });
+  // const [userInfo, setUserInfo] = React.useState(null);
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    androidClientId: `${process.env.GOOGLE_OAUTH_ANDROID_CLIENT_ID}`,
+    iosClientId: `${process.env.GOOGLE_OAUTH_IOS_CLIENT_ID}`,
+    webClientId: `${process.env.GOOGLE_OAUTH_WEB_CLIENT_ID}`,
+  });
 
   React.useEffect(() => {
     handleSignInWithGoogle();
   }, [response]);
 
   async function handleSignInWithGoogle() {
-    const user = await AsyncStorage.getItem('@user');
+    const user = await AsyncStorage.getItem("@user");
     if (!user) {
-      if (response?.type === 'success') {
+      if (response?.type === "success") {
         await getUserInfo(response.authentication.accessToken);
-  
-        await AsyncStorage.setItem('@userIsAuthenticated', 'true');
+
+        await AsyncStorage.setItem("@userIsAuthenticated", "true");
       }
     } else {
       setUserInfo(JSON.parse(user));
@@ -51,17 +48,16 @@ export default function AuthScreen() {
     } catch (error) {
       console.error("Error fetching user info:", error);
     }
-  }
+  };
 
   async function handleLogout() {
     await AsyncStorage.removeItem("@user");
-    await AsyncStorage.setItem('@userIsAuthenticated', 'false');
-    
+    await AsyncStorage.setItem("@userIsAuthenticated", "false");
+
     setUserInfo(null);
   }
 
   return (
-
     <View style={styles.container}>
       {!userInfo ? (
         <Button
@@ -81,7 +77,7 @@ export default function AuthScreen() {
             Verified: {userInfo.verified_email ? "yes" : "no"}
           </Text>
           <Text style={styles.text}>Name: {userInfo.name}</Text>
-          
+
           {/* Logout button */}
           <Button title="Logout" onPress={handleLogout} />
         </View>
