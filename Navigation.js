@@ -3,7 +3,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import AuthScreen from './screens/AuthScreen';
-import HomeScreen from './screens/HomeScreen';
+import ExploreScreen from './screens/tabScreens/ExploreScreen';
+import HomeScreen from './screens/tabScreens/HomeScreen';
+import FavouriteScreen from './screens/tabScreens/FavouriteScreen';
+import ProfileScreen from './screens/tabScreens/ProfileScreen';
 import { StyleSheet, Text, View, Button, Image } from "react-native";
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
@@ -98,14 +101,17 @@ function TabGroup() {
   return (
       <Tab.Navigator
         screenOptions={({route}) => ({
+          headerShown: false,
           tabBarIcon: ({ focused, color, size }) => {
             let iconName;
             if (route.name === "Home") {
               iconName = focused ? "home" : "home-outline";
-            } else if (route.name === "Settings") {
-              iconName = focused ? "settings" : "ios-settings-sharp";
-            } else if (route.name === "Notifications") {
-              iconName = focused ? "ios-notifications" : "notifications-outline";
+            } else if (route.name === "Explore") {
+              iconName = focused ? "compass" : "compass-outline";
+            } else if (route.name === "Favourite") {
+              iconName = focused ? "heart" : "heart-outline";
+            } else if (route.name === "Profile") {
+              iconName = focused ? "person" : "person-outline";
             }
             return <Ionicons name={iconName} size={size} color={color} style={{ marginBottom: -1 }}/>;
           },
@@ -115,8 +121,9 @@ function TabGroup() {
         })} 
       >
           <Tab.Screen name="Home" component={HomeScreen} />
-          <Tab.Screen name="Notifications" component={HomeScreen} />
-          <Tab.Screen name="Settings" component={HomeScreen} />
+          <Tab.Screen name="Explore" component={ExploreScreen} />
+          <Tab.Screen name="Favourite" component={FavouriteScreen} />
+          <Tab.Screen name="Profile" component={ProfileScreen} />
       </Tab.Navigator>
   )
 }

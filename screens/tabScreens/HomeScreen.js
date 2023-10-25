@@ -2,13 +2,8 @@ import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function HomeScreen({ setUserInfo }) {
-    async function handleLogout() {
-        await AsyncStorage.removeItem("@user");
-        await AsyncStorage.setItem('@userIsAuthenticated', 'false');
-        
-        setUserInfo(null);
-    }
+export default function HomeScreen() {
+
   return (
     <View style={styles.container}>
       <Text style={styles.welcomeText}>Welcome back!</Text>
@@ -17,10 +12,6 @@ export default function HomeScreen({ setUserInfo }) {
         title="Let's collabor-eat"
         onPress={() => {
         }}
-      />
-      <Button
-        title="Logout"
-        onPress={handleLogout}
       />
     </View>
   );
