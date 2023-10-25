@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Button, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -8,9 +8,10 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient
-        colors={['rgb(228, 181, 92)', 'white']}
+        colors={["#EAAD37", "rgba(255, 255, 255, 0.00)"]}
         style={{ flex: 1, width: "100%", paddingHorizontal: 15, flexDirection:'column', justifyContent: 'center', alignItems: 'center' }}
       >
+        <Image source={require('../../assets/meal-logo.png')} style={styles.logo}/>
         <Text style={styles.headerText}>Welcome!</Text>
         <View style={styles.divContainer}>
           <View style={styles.div}>
@@ -50,6 +51,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'black',
     textAlign: "center"
+  },
+  logo: {
+    width: 200, 
+    height: 200,
   },
   divContainer: {
     flexDirection: 'row',
