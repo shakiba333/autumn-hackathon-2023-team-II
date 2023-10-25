@@ -3,7 +3,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import AuthScreen from './screens/AuthScreen';
+import ExploreScreen from './screens/tabScreens/ExploreScreen';
 import HomeScreen from './screens/tabScreens/HomeScreen';
+import FavouriteScreen from './screens/tabScreens/FavouriteScreen';
+import ProfileScreen from './screens/tabScreens/ProfileScreen';
 import { StyleSheet, Text, View, Button, Image } from "react-native";
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
@@ -118,9 +121,9 @@ function TabGroup() {
         })} 
       >
           <Tab.Screen name="Home" component={HomeScreen} />
-          <Tab.Screen name="Explore" component={HomeScreen} />
-          <Tab.Screen name="Favourite" component={HomeScreen} />
-          <Tab.Screen name="Profile" component={HomeScreen} />
+          <Tab.Screen name="Explore" component={ExploreScreen} />
+          <Tab.Screen name="Favourite" component={FavouriteScreen} />
+          <Tab.Screen name="Profile" component={ProfileScreen} />
       </Tab.Navigator>
   )
 }
