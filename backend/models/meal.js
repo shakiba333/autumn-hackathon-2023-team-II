@@ -1,31 +1,30 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-const mealSchema = mongoose.Schema({
+const mealSchema = new Schema(
+  {
     api_id: {
-        type: Number,
-        required: true,
+      type: Number,
+      required: true,
     },
     name: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     description: {
-        type: String,
+      type: String,
     },
     date: {
-        type: Date,
-        required: true,
+      type: Date,
+      required: true,
     },
     time: {
-        type: String,
+      type: String,
     },
-    group: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Group',
-        required: true,
-    },
-}, {
+  },
+  {
     timestamps: true,
-});
+  }
+);
 
-module.exports = mongoose.model('Meal', mealSchema);
+module.exports = mongoose.model("Meal", mealSchema);
