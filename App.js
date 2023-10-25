@@ -47,9 +47,15 @@ export default function App() {
       await AsyncStorage.setItem("@user", JSON.stringify(user));
       setUserInfo(user);
     } catch (error) {
-      // error handler
+      console.error("Error fetching user info:", error);
     }
-  };
+  }
+
+  async function handleLogout() {
+    await AsyncStorage.removeItem("@user");
+    
+    setUserInfo(null);
+  }
 
   return (
     <View style={styles.container}>
@@ -71,13 +77,11 @@ export default function App() {
             Verified: {userInfo.verified_email ? "yes" : "no"}
           </Text>
           <Text style={styles.text}>Name: {userInfo.name}</Text>
-          {/* <Text style={styles.text}>{JSON.stringify(userInfo, null, 2)}</Text> */}
+          
+          {/* Logout button */}
+          <Button title="Logout" onPress={handleLogout} />
         </View>
       )}
-      <Button
-        title="remove local store"
-        onPress={async () => await AsyncStorage.removeItem("@user")}
-      />
     </View>
   );
 }
