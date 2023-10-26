@@ -1,4 +1,5 @@
 const User = require("../models/user");
+const Profile = require("../models/profile");
 
 module.exports = {
   create,
@@ -8,7 +9,7 @@ module.exports = {
 async function create(req, res) {
   try {
     console.log(req.body);
-    const user = await User.findOne({ googleId: req.body.id });
+    const user = await User.findOne({ googleId: req.body.googleId });
 
     if (user) {
       res.status(500).json({ error: "Email already in use." });
@@ -17,7 +18,7 @@ async function create(req, res) {
     const newProfile = await Profile.create(req.body);
     req.body.profile = newProfile._id;
     let newUser = await User.create({
-      googleId: req.body.id,
+      googleId: req.body.googleId,
       name: req.body.name,
       email: req.body.email,
       avatar: req.body.picture,
@@ -26,7 +27,6 @@ async function create(req, res) {
 
     res.status(200).json(newUser);
   } catch (err) {
-    // console.log(err);
     res.status(500).json({ error: "Error creating your user." });
   }
 }
