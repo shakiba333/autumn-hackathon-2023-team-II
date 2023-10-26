@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import axios from 'axios';
+import RecipeList from '../../components/RecipeList';
 
 export default function HomeScreen() {
   const [isLoading, setIsLoading] = useState(true);
@@ -47,20 +48,7 @@ export default function HomeScreen() {
         >
           <Image source={require('../../assets/meal-logo.png')} style={styles.logo} />
           <Text style={styles.headerText}>Welcome!</Text>
-          <View style={styles.divContainer}>
-            <View style={styles.div}>
-              <Text>Div 1</Text>
-            </View>
-            <View style={styles.div}>
-              <Text>Div 2</Text>
-            </View>
-            <View style={styles.div}>
-              <Text>Div 3</Text>
-            </View>
-            <View style={styles.div}>
-              <Text>Div 4</Text>
-            </View>
-          </View>
+          <RecipeList recipes={recipes} />
           <TouchableOpacity style={styles.button}>
             <Text style={styles.buttonText}>Let's CollaborEat</Text>
             <Ionicons name="arrow-forward" size={24} color="white" />
@@ -82,6 +70,7 @@ const styles = StyleSheet.create({
   },
   gradient: {
     width: "100%",
+    height: '100%',
     paddingHorizontal: 15,
     flexDirection: 'column',
     justifyContent: 'center',
@@ -98,23 +87,23 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
   },
-  divContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    paddingHorizontal: 10,
-    width: '100%',
-    marginBottom: 20,
-    flexWrap: 'wrap',
-  },
-  div: {
-    flexBasis: '45%',
-    height: 100,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'lightgray',
-    margin: 10,
-    borderRadius: 10,
-  },
+  // divContainer: {
+  //   flexDirection: 'row',
+  //   justifyContent: 'center',
+  //   paddingHorizontal: 10,
+  //   width: '100%',
+  //   marginBottom: 20,
+  //   flexWrap: 'wrap',
+  // },
+  // div: {
+  //   flexBasis: '45%',
+  //   height: 100,
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  //   backgroundColor: 'lightgray',
+  //   margin: 10,
+  //   borderRadius: 10,
+  // },
   button: {
     flexDirection: 'row',
     backgroundColor: 'rgb(149, 184, 57)',
