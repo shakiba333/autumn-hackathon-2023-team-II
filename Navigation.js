@@ -2,12 +2,13 @@ import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-
+import PreferencesScreen from "./screens/PreferenceScreen";
 import AuthScreen from "./screens/AuthScreen";
 import ExploreScreen from "./screens/tabScreens/ExploreScreen";
 import HomeScreen from "./screens/tabScreens/HomeScreen";
 import FavouriteScreen from "./screens/tabScreens/FavouriteScreen";
 import ProfileScreen from "./screens/tabScreens/ProfileScreen";
+import Cravings from "./screens/Cravings";
 import {
   StyleSheet,
   Text,
@@ -37,11 +38,6 @@ import { useFonts } from "expo-font";
 
 // loadFonts();
 
-import Cravings from "./screens/Cravings";
-
-
-const Stack = createStackNavigator();
-const Tab = createBottomTabNavigator();
 WebBrowser.maybeCompleteAuthSession();
 
 function Navigation() {
@@ -227,6 +223,9 @@ const styles = StyleSheet.create({
 
 export default Navigation;
 
+const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
+
 function HomeStackNavigator() {
   return (
     <Stack.Navigator
@@ -241,8 +240,6 @@ function HomeStackNavigator() {
     </Stack.Navigator>
   );
 }
-
-
 
 function TabGroup() {
   return (
