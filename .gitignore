@@ -6,6 +6,7 @@
 .pnp.js
 
 # testing
+/.expo
 /coverage
 
 # production
