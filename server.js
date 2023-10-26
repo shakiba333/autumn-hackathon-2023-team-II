@@ -19,6 +19,7 @@ app.use(express.static(path.join(__dirname, "build")));
 // Set up routes and middleware here
 app.use("/api/users", require("./backend/routes/user"));
 app.use("/api/profiles", require("./backend/routes/profile"));
+app.use("/api/meals", require("./backend/routes/meal"));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

@@ -21,6 +21,8 @@ async function update(req, res) {
       {
         diet: req.body.diet,
         health: req.body.health,
+        cuisine: req.body.cuisine,
+        dish: req.body.dish,
         groups: req.body.groups,
       },
       { new: true }

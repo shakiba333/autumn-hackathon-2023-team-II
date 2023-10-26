@@ -1,6 +1,6 @@
 const Meal = require("../models/meal");
 
-model.exports = {
+module.exports = {
   createMeal,
   index,
   showMeal,

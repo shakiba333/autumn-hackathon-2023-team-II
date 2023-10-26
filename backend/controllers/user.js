@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const Profile = require("../models/profile");
+const Group = require("../models/group");
 
 module.exports = {
   create,
@@ -15,8 +16,12 @@ async function create(req, res) {
       res.status(500).json({ error: "Email already in use." });
     }
 
+    const newGroup = await Group.create(req.body);
+    req.body.groups = [newGroup._id];
+
     const newProfile = await Profile.create(req.body);
     req.body.profile = newProfile._id;
+
     let newUser = await User.create({
       googleId: req.body.googleId,
       name: req.body.name,
