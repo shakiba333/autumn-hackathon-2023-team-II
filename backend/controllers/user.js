@@ -7,35 +7,38 @@ module.exports = {
 
 async function create(req, res) {
   try {
-    const user = await User.findOne({ email: req.body.email });
-    const profile = await Profile.findOne({ username: req.body.username });
+    console.log(req.body);
+    const user = await User.findOne({ googleId: req.body.id });
 
     if (user) {
       res.status(500).json({ error: "Email already in use." });
-    } else if (profile) {
-      res.status(500).json({ error: "Username not available." });
     }
 
     const newProfile = await Profile.create(req.body);
     req.body.profile = newProfile._id;
-    let newUser = await User.create(req.body);
+    let newUser = await User.create({
+      googleId: req.body.id,
+      name: req.body.name,
+      email: req.body.email,
+      avatar: req.body.picture,
+      profile: req.body.profile,
+    });
 
     res.status(200).json(newUser);
   } catch (err) {
+    // console.log(err);
     res.status(500).json({ error: "Error creating your user." });
   }
 }
 
 async function login(req, res) {
   try {
-    const user = await User.findOne({ email: req.body.email });
+    const user = await User.findOne({ googleId: req.body.id });
 
     if (!user) throw new Error();
 
-    // need to write logic for login
-
     res.json(user);
   } catch (err) {
-    res.status(400).json("Bad Credentials");
+    res.status(400).json("Unable to login");
   }
 }

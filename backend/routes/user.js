@@ -1,10 +1,12 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const userCtrl = require('../controllers/user');
+const userCtrl = require("../controllers/user");
 
+// All paths start with '/api/users'
 
-router.post('/login', userCtrl.loginUser);
-router.post('/logout', userCtrl.logoutUser);
-
+// POST /api/users (create a user - sign up)
+router.post("/", userCtrl.create);
+// POST /api/users/login
+router.post("/login", userCtrl.login);
 
 module.exports = router;
