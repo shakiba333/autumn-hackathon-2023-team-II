@@ -42,6 +42,7 @@ WebBrowser.maybeCompleteAuthSession();
 
 function Navigation() {
   const [userInfo, setUserInfo] = React.useState(null);
+  const [showOnboarding, setShowOnboarding] = React.useState(true);
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId:
       "356560269346-l8nhb3lgrdoefj5ga4kkkslh0pstah0a.apps.googleusercontent.com",
@@ -89,11 +90,31 @@ function Navigation() {
     setUserInfo(null);
   }
 
+  React.useEffect(() => {
+    const checkOnboardingStatus = async () => {
+      const onboardingStatus = await AsyncStorage.getItem("onboardingStatus");
+      console.log("onboardingStatus:", onboardingStatus);
+      setShowOnboarding(onboardingStatus !== "completed");
+    };
+    checkOnboardingStatus();
+  }, []);
+
+  const handleOnboardingComplete = async () => {
+    await AsyncStorage.setItem("onboardingStatus", "completed");
+    setShowOnboarding(false);
+  };
+
   return (
     <>
       {userInfo ? (
         <NavigationContainer>
-          <TabGroup />
+          {showOnboarding ? (
+            <PreferencesScreen onComplete={handleOnboardingComplete} />
+          ) : (
+            <Stack.Navigator headerMode="none">
+              <Stack.Screen name="Home" component={TabGroup} />
+            </Stack.Navigator>
+          )}
         </NavigationContainer>
       ) : (
         <LinearGradient
@@ -243,33 +264,38 @@ function HomeStackNavigator() {
 
 function TabGroup() {
   return (
-
-      <Tab.Navigator
-        screenOptions={({route}) => ({
-          headerShown: false,
-          tabBarIcon: ({ focused, color, size }) => {
-            let iconName;
-            if (route.name === "Home") {
-              iconName = focused ? "home" : "home-outline";
-            } else if (route.name === "Explore") {
-              iconName = focused ? "compass" : "compass-outline";
-            } else if (route.name === "Favourite") {
-              iconName = focused ? "heart" : "heart-outline";
-            } else if (route.name === "Profile") {
-              iconName = focused ? "person" : "person-outline";
-            }
-            return <Ionicons name={iconName} size={size} color={color} style={{ marginBottom: -1 }}/>;
-          },
-          tabBarActiveTintColor: 'black',
-          tabBarInactiveTintColor: 'gray',
-          tabBarLabel: ""
-        })} 
-      >
-          <Tab.Screen name="Home" component={HomeStackNavigator} />
-          <Tab.Screen name="Explore" component={ExploreScreen} />
-          <Tab.Screen name="Favourite" component={FavouriteScreen} />
-          <Tab.Screen name="Profile" component={ProfileScreen} />
-      </Tab.Navigator>
-  )
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+          if (route.name === "Home") {
+            iconName = focused ? "home" : "home-outline";
+          } else if (route.name === "Explore") {
+            iconName = focused ? "compass" : "compass-outline";
+          } else if (route.name === "Favourite") {
+            iconName = focused ? "heart" : "heart-outline";
+          } else if (route.name === "Profile") {
+            iconName = focused ? "person" : "person-outline";
+          }
+          return (
+            <Ionicons
+              name={iconName}
+              size={size}
+              color={color}
+              style={{ marginBottom: -1 }}
+            />
+          );
+        },
+        tabBarActiveTintColor: "black",
+        tabBarInactiveTintColor: "gray",
+        tabBarLabel: "",
+      })}
+    >
+      <Tab.Screen name="Home" component={HomeStackNavigator} />
+      <Tab.Screen name="Explore" component={ExploreScreen} />
+      <Tab.Screen name="Favourite" component={FavouriteScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
+    </Tab.Navigator>
+  );
 }
-
