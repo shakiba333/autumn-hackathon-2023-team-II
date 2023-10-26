@@ -16,7 +16,7 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import { LinearGradient } from 'expo-linear-gradient';
+import { LinearGradient } from "expo-linear-gradient";
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -83,25 +83,50 @@ function Navigation() {
         </NavigationContainer>
       ) : (
         <LinearGradient
-        colors={['rgb(228, 181, 92)', 'white']}
-        style={{ flex: 1, width: "100%", paddingHorizontal: 15, flexDirection:'column', justifyContent: 'center', alignItems: 'center' }}
-      >
-        <View style={styles.centeredContainer}>
-          <View>
-            <TextInput style={styles.input} />
-            <TextInput style={styles.input} />
-            <TouchableOpacity style={styles.loginButton}>Log In</TouchableOpacity>
-            <Button
-              title="Sign in with Google"
-              disabled={!request}
-              onPress={() => {
-                promptAsync();
-              }}
-            />
-            <Text>new User?</Text>
-            <TouchableOpacity style={styles.button}>Sign Up</TouchableOpacity>
+          colors={["rgb(228, 181, 92)", "white"]}
+          style={{
+            flex: 1,
+            width: "100%",
+            paddingHorizontal: 15,
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <View style={styles.centeredContainer}>
+            <View>
+              {/* <TextInput style={styles.input} />
+            <TextInput style={styles.input} /> */}
+              {/* <TouchableOpacity style={styles.loginButton}>
+                Log In
+              </TouchableOpacity> */}
+              <View>
+                <Image source={require('./assets/images/logo.png')} style={styles.logo} />
+                <Text style={styles.mainHeader}>CollaborEat</Text>
+              </View>
+              <TouchableOpacity
+              style={styles.googleButton}
+                onPress={() => {
+                  promptAsync();
+                }}
+              >
+                Sign In with Google
+              </TouchableOpacity>
+              {/* <Button
+                title="Sign in with Google"
+                disabled={!request}
+                onPress={() => {
+                  promptAsync();
+                }}
+              /> */}
+              <Text
+                style={{ textAlign: "center", marginBottom: 20, marginTop: 20 }}
+              >
+                New User?
+              </Text>
+              <TouchableOpacity style={styles.button}>Sign Up</TouchableOpacity>
+            </View>
           </View>
-        </View>
         </LinearGradient>
       )}
     </>
@@ -114,6 +139,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  mainHeader: {
+fontSize: 44,
+textAlign: "center",
+marginBottom: 40,
+  },
+  logo: {
+    height: 200,
+    width: 200,
+    
+  },
   input: {
     height: 40,
     margin: 12,
@@ -122,27 +157,38 @@ const styles = StyleSheet.create({
     width: 200,
   },
   button: {
-    flexDirection: 'row',
-    backgroundColor: 'rgb(149, 184, 57)',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    backgroundColor: "rgb(149, 184, 57)",
+    alignItems: "center",
+    justifyContent: "center",
     padding: 15,
     paddingHorizontal: 35,
     borderRadius: 10,
-    color: 'white',
+    color: "white",
   },
 
   loginButton: {
-    flexDirection: 'row',
-    backgroundColor: '#EAAD37',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    backgroundColor: "#EAAD37",
+    alignItems: "center",
+    justifyContent: "center",
     padding: 15,
     paddingHorizontal: 35,
     borderRadius: 10,
-    color: 'white',
-    marginBottom: 10,
-  }
+    color: "white",
+    marginBottom: 20,
+  },
+  googleButton: {
+    flexDirection: "row",
+    backgroundColor: "lightgray",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 15,
+    paddingHorizontal: 35,
+    borderRadius: 10,
+    color: "darkGrey",
+    marginBottom: 20,
+  },
 });
 
 export default Navigation;
