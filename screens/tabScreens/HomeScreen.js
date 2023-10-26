@@ -1,40 +1,72 @@
-import React from 'react';
-import { View, Text, Button, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { useState, useEffect } from 'react';
+import { View, Text, Button, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import axios from 'axios';
 
 export default function HomeScreen() {
+  const [isLoading, setIsLoading] = useState(true);
+  const [recipes, setRecipes] = useState([]);
+  const foodItems = ['chicken', 'pasta', 'salad', 'sushi', 'pizza', 'burger', 'soup', 'taco', 'sandwich', 'steak'];
+  const randomFood = foodItems[Math.floor(Math.random() * foodItems.length)];
+  console.log(randomFood)
+  const randomNumber = Math.floor(Math.random() * 20);
+
+  useEffect(() => {
+    const edamamApiUrl = `https://api.edamam.com/api/recipes/v2?type=public&q=${randomFood}&app_id=41abb1f4&app_key=375f32061b6e7ab61e5b1808f4469c1e`;
+    axios.get(edamamApiUrl)
+      .then(response => {
+        const recipeData = response.data.hits || [];
+        const sliceStart = randomNumber - 4;
+        const sliceEnd = randomNumber;
+        console.log(recipeData.slice(sliceStart, sliceEnd));
+        setRecipes(recipeData.slice(sliceStart, sliceEnd));
+        setIsLoading(false);
+      })
+      .catch(error => {
+        console.error('Error fetching recipes:', error);
+        setIsLoading(false);
+      });
+  }, []);
+
+  if (isLoading) {
+    return (
+      <View>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
-      <LinearGradient
-        colors={["#EAAD37", "rgba(255, 255, 255, 0.00)"]}
-        style={{ flex: 1, width: "100%", paddingHorizontal: 15, flexDirection:'column', justifyContent: 'center', alignItems: 'center' }}
-      >
-        <Image source={require('../../assets/meal-logo.png')} style={styles.logo}/>
-        <Text style={styles.headerText}>Welcome!</Text>
-        <View style={styles.divContainer}>
-          <View style={styles.div}>
-            <Text>Div 1</Text>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <LinearGradient
+          colors={["#EAAD37", "rgba(255, 255, 255, 0.00)"]}
+          style={styles.gradient}
+        >
+          <Image source={require('../../assets/meal-logo.png')} style={styles.logo} />
+          <Text style={styles.headerText}>Welcome!</Text>
+          <View style={styles.divContainer}>
+            <View style={styles.div}>
+              <Text>Div 1</Text>
+            </View>
+            <View style={styles.div}>
+              <Text>Div 2</Text>
+            </View>
+            <View style={styles.div}>
+              <Text>Div 3</Text>
+            </View>
+            <View style={styles.div}>
+              <Text>Div 4</Text>
+            </View>
           </View>
-          <View style={styles.div}>
-            <Text>Div 2</Text>
-          </View>
-          <View style={styles.div}>
-            <Text>Div 3</Text>
-          </View>
-          <View style={styles.div}>
-            <Text>Div 4</Text>
-          </View>
-          <View style={styles.div}>
-            <Text>Div 4</Text>
-          </View>
-        </View>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Let's CollaborEat</Text>
-          <Ionicons name="arrow-forward" size={24} color="white" />
-        </TouchableOpacity>
-      </LinearGradient>
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.buttonText}>Let's CollaborEat</Text>
+            <Ionicons name="arrow-forward" size={24} color="white" />
+          </TouchableOpacity>
+        </LinearGradient>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -42,18 +74,28 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  scrollContainer: {
+    flexGrow: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  gradient: {
+    width: "100%",
+    paddingHorizontal: 15,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   headerText: {
     fontSize: 24,
     margin: 20,
     fontWeight: 'bold',
     color: 'black',
-    textAlign: "center"
+    textAlign: "center",
   },
   logo: {
-    width: 200, 
+    width: 200,
     height: 200,
   },
   divContainer: {
@@ -81,12 +123,13 @@ const styles = StyleSheet.create({
     padding: 15,
     paddingHorizontal: 35,
     borderRadius: 10,
-    maxWidth: 'max-content'
+    maxWidth: 'max-content',
+    marginBottom: 20
   },
   buttonText: {
     color: 'white',
     fontSize: 18,
     marginRight: 10,
-    fontWeight: '600'
+    fontWeight: '600',
   },
 });
