@@ -5,12 +5,13 @@ function Cravings({ navigation }) {
   const [selectedMeal, setSelectedMeal] = useState(null);
 
   const mealTypes = [
-    { label: "Breakfast", },
-    { label: "Brunch",  },
-    { label: "Lunch/Dinner",  },
-    { label: "Snack", },
-    { label: "Teatime",  },
+    { label: "Breakfast", image: require('../assets/images/breakfast.jpg') },
+    { label: "Brunch", image: require('../assets/images/brunch.jpg') },
+    { label: "Lunch/Dinner", image: require('../assets/images/linner.jpg') },
+    { label: "Snack", image: require('../assets/images/snack.jpg') },
+    { label: "Teatime", image: require('../assets/images/teatime.jpg') },
   ];
+  
 
   useEffect(() => {
     console.log(selectedMeal);
@@ -32,8 +33,8 @@ function Cravings({ navigation }) {
           ]}
           onPress={() => handleMealSelection(mealType)}
         >
-          {/* <Image source={mealType.image} style={styles.buttonImage} /> */}
           <Text style={styles.buttonLabel}>{mealType.label}</Text>
+          <Image source={mealType.image} style={styles.buttonImage} />
         </TouchableOpacity>
       ))}
     </SafeAreaView>
@@ -50,10 +51,14 @@ const styles = StyleSheet.create({
   heading: {
     fontSize: 20,
     marginBottom: 20,
+    fontWeight: 700,
+    width: 200, 
+    textAlign: 'center',
   },
   mealButton: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: 'space-between',
     marginVertical: 10,
     padding: 10,
     borderWidth: 1,
@@ -66,11 +71,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgb(182,126,41)'
   },
   selectedMealButton: {
-    backgroundColor: "lightblue",
+    backgroundColor: "rgb(149, 184, 57)"
   },
   buttonImage: {
-    width: 24,
-    height: 24,
+    width: 40,
+    height: 40,
+    borderRadius: 100,
+    objectFit: 'fill'
   },
   buttonLabel: {
     fontSize: 16,
