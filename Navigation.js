@@ -21,6 +21,16 @@ import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
+import { AppRegistry } from "react-native";
+import { useFonts } from "expo-font";
+
+const loadFonts = async () => {
+  await useFonts({
+    Roboto: require("./assets/fonts/Roboto/Roboto-Regular.ttf"),
+  });
+};
+
+loadFonts();
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -101,15 +111,25 @@ function Navigation() {
                 Log In
               </TouchableOpacity> */}
               <View>
-                <Image source={require('./assets/images/logo.png')} style={styles.logo} />
-                <Text style={styles.mainHeader}>CollaborEat</Text>
+                <Image
+                  source={require("./assets/images/logo.png")}
+                  style={styles.logo}
+                />
+                <Text style={styles.mainHeader}>
+                  Collabor
+                  <Text style={{ color: "#EAAD37" }}>Eat</Text>
+                </Text>
               </View>
               <TouchableOpacity
-              style={styles.googleButton}
+                style={styles.googleButton}
                 onPress={() => {
                   promptAsync();
                 }}
               >
+                <Image
+                  source={require("./assets/images/googleIcon.png")}
+                  style={{ height: 20, width: 20, left: -10, marginRight: 10 }}
+                />
                 Sign In with Google
               </TouchableOpacity>
               {/* <Button
@@ -140,14 +160,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   mainHeader: {
-fontSize: 44,
-textAlign: "center",
-marginBottom: 40,
+    fontSize: 44,
+    textAlign: "center",
+    marginBottom: 40,
+    fontWeight: "bold",
   },
   logo: {
     height: 200,
     width: 200,
-    
   },
   input: {
     height: 40,
@@ -180,14 +200,20 @@ marginBottom: 40,
   },
   googleButton: {
     flexDirection: "row",
-    backgroundColor: "lightgray",
+    backgroundColor: "#eee",
+    boxShadow:
+      "0px 1px 1px 0px rgba(0, 0, 0, 0.17), 0px 0px 1px 0px rgba(0, 0, 0, 0.08)",
+    borderRadius: 2,
     alignItems: "center",
     justifyContent: "center",
     padding: 15,
     paddingHorizontal: 35,
     borderRadius: 10,
-    color: "darkGrey",
+    color: "rgba(0, 0, 0, 0.54)",
     marginBottom: 20,
+    fontSize: 16,
+    fontFamily: "Roboto",
+    fontWeight: "bold",
   },
 });
 
