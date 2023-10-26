@@ -7,9 +7,10 @@ import axios from 'axios';
 import RecipeList from '../../components/RecipeList';
 import { useNavigation } from '@react-navigation/native';
 import { REACT_APP_API } from '@env';
+import LoadingDots from "react-native-loading-dots";
 
 export default function HomeScreen() {
-  console.log("dotenv " + process.env.REACT_APP_API)
+  console.log("dotenv " + process.env.REACT_APP_EDAMAM_APPLICATION_ID)
 
   const [isLoading, setIsLoading] = useState(true);
   const [recipes, setRecipes] = useState([]);
@@ -29,7 +30,7 @@ export default function HomeScreen() {
         const sliceStart = randomNumber - 4;
         setRecipes(recipeData.slice(sliceStart, sliceEnd));
         console.log(recipeData.slice(sliceStart, sliceEnd))
-        setIsLoading(false);
+        setTimeout(()=> setIsLoading(false), 4000)
       })
       .catch(error => {
         console.error('Error fetching recipes:', error);
@@ -39,9 +40,12 @@ export default function HomeScreen() {
 
   if (isLoading) {
     return (
-      <View>
-        <Text>Loading...</Text>
-      </View>
+      <SafeAreaView style={styles.loadingContainer}>
+        <Image source={require('../../assets/meal-logo.png')} style={styles.loadingLogo} />
+        <View style={styles.dotsWrapper}>
+            <LoadingDots colors={['#FFF', '#FFF', '#FFF', '#FFF']}  size={10}/>
+        </View>
+      </SafeAreaView>
     );
   }
 
@@ -67,6 +71,18 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
+  loadingContainer: {
+      backgroundColor: '#EAA237',
+      height: '100vh',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 40,
+      flexDirection: 'column'
+    },
+    loadingLogo: {
+      width: 250,
+      height: 250,
+    },
   container: {
     flex: 1,
   },
@@ -91,8 +107,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   logo: {
-    width: 200,
-    height: 200,
+    width: 250,
+    height: 250,
+    marginTop: 10
   },
   button: {
     flexDirection: 'row',
