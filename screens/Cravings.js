@@ -1,10 +1,10 @@
 import React from "react";
 import { Text, View } from "react-native";
 
-function Cravings() {
+function Cravings({ navigation }) {
   return (
     <View>
-      <Text>Profile</Text>
+      <Text>Cravings</Text>
     </View>
   );
 }

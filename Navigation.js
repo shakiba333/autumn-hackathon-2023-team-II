@@ -2,7 +2,7 @@ import * as React from "react";
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import AuthScreen from './screens/AuthScreen';
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ExploreScreen from './screens/tabScreens/ExploreScreen';
 import HomeScreen from './screens/tabScreens/HomeScreen';
 import FavouriteScreen from './screens/tabScreens/FavouriteScreen';
@@ -12,6 +12,7 @@ import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
+import Cravings from "./screens/Cravings";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -97,6 +98,21 @@ const styles = StyleSheet.create({
 
 export default Navigation;
 
+function HomeStackNavigator() {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="Cravings" component={Cravings} />
+    </Stack.Navigator>
+  );
+}
+
+
+
 function TabGroup() {
   return (
       <Tab.Navigator
@@ -120,7 +136,7 @@ function TabGroup() {
           tabBarLabel: ""
         })} 
       >
-          <Tab.Screen name="Home" component={HomeScreen} />
+          <Tab.Screen name="Home" component={HomeStackNavigator} />
           <Tab.Screen name="Explore" component={ExploreScreen} />
           <Tab.Screen name="Favourite" component={FavouriteScreen} />
           <Tab.Screen name="Profile" component={ProfileScreen} />
