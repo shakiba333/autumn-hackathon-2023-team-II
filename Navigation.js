@@ -2,6 +2,7 @@ import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+
 import AuthScreen from "./screens/AuthScreen";
 import ExploreScreen from "./screens/tabScreens/ExploreScreen";
 import HomeScreen from "./screens/tabScreens/HomeScreen";
@@ -17,10 +18,14 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
+
 import { AppRegistry } from "react-native";
 import { useFonts } from "expo-font";
 
@@ -31,6 +36,9 @@ const loadFonts = async () => {
 };
 
 loadFonts();
+
+import Cravings from "./screens/Cravings";
+
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -219,40 +227,50 @@ const styles = StyleSheet.create({
 
 export default Navigation;
 
-function TabGroup() {
+function HomeStackNavigator() {
   return (
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
+    <Stack.Navigator
+      screenOptions={{
         headerShown: false,
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
-          if (route.name === "Home") {
-            iconName = focused ? "home" : "home-outline";
-          } else if (route.name === "Explore") {
-            iconName = focused ? "compass" : "compass-outline";
-          } else if (route.name === "Favourite") {
-            iconName = focused ? "heart" : "heart-outline";
-          } else if (route.name === "Profile") {
-            iconName = focused ? "person" : "person-outline";
-          }
-          return (
-            <Ionicons
-              name={iconName}
-              size={size}
-              color={color}
-              style={{ marginBottom: -1 }}
-            />
-          );
-        },
-        tabBarActiveTintColor: "black",
-        tabBarInactiveTintColor: "gray",
-        tabBarLabel: "",
-      })}
+      }}
     >
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Explore" component={ExploreScreen} />
-      <Tab.Screen name="Favourite" component={FavouriteScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
-    </Tab.Navigator>
+      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="Cravings" component={Cravings} />
+    </Stack.Navigator>
   );
 }
+
+
+
+function TabGroup() {
+  return (
+
+      <Tab.Navigator
+        screenOptions={({route}) => ({
+          headerShown: false,
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
+            if (route.name === "Home") {
+              iconName = focused ? "home" : "home-outline";
+            } else if (route.name === "Explore") {
+              iconName = focused ? "compass" : "compass-outline";
+            } else if (route.name === "Favourite") {
+              iconName = focused ? "heart" : "heart-outline";
+            } else if (route.name === "Profile") {
+              iconName = focused ? "person" : "person-outline";
+            }
+            return <Ionicons name={iconName} size={size} color={color} style={{ marginBottom: -1 }}/>;
+          },
+          tabBarActiveTintColor: 'black',
+          tabBarInactiveTintColor: 'gray',
+          tabBarLabel: ""
+        })} 
+      >
+          <Tab.Screen name="Home" component={HomeStackNavigator} />
+          <Tab.Screen name="Explore" component={ExploreScreen} />
+          <Tab.Screen name="Favourite" component={FavouriteScreen} />
+          <Tab.Screen name="Profile" component={ProfileScreen} />
+      </Tab.Navigator>
+  )
+}
+
