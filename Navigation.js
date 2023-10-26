@@ -237,6 +237,7 @@ function HomeStackNavigator() {
     >
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="Cravings" component={Cravings} />
+      <Stack.Screen name="Preferences" component={PreferencesScreen} />
     </Stack.Navigator>
   );
 }
