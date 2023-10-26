@@ -104,6 +104,7 @@ function HomeStackNavigator() {
       screenOptions={{
         headerShown: false,
       }}
+      initialRouteName="Home"
     >
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="Cravings" component={Cravings} />
