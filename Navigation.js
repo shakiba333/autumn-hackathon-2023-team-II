@@ -29,13 +29,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { AppRegistry } from "react-native";
 import { useFonts } from "expo-font";
 
-const loadFonts = async () => {
-  await useFonts({
-    Roboto: require("./assets/fonts/Roboto/Roboto-Regular.ttf"),
-  });
-};
+// const loadFonts = async () => {
+//   await useFonts({
+//     Roboto: require("./assets/fonts/Roboto/Roboto-Regular.ttf"),
+//   });
+// };
 
-loadFonts();
+// loadFonts();
 
 import Cravings from "./screens/Cravings";
 
