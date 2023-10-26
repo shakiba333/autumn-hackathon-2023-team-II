@@ -1,9 +1,10 @@
+import { useNavigation } from "@react-navigation/native";
 import React, { useState, useEffect } from "react";
 import { SafeAreaView, Text, View, TouchableOpacity, Image, StyleSheet } from "react-native";
 
 function Cravings({ navigation }) {
   const [selectedMeal, setSelectedMeal] = useState(null);
-
+  
   const mealTypes = [
     { label: "Breakfast", image: require('../assets/images/breakfast.jpg') },
     { label: "Brunch", image: require('../assets/images/brunch.jpg') },
@@ -19,6 +20,8 @@ function Cravings({ navigation }) {
 
   const handleMealSelection = (mealType) => {
     setSelectedMeal(mealType.label);
+    console.log(selectedMeal);
+    navigation.navigate('Suggestions');
   };
 
   return (
