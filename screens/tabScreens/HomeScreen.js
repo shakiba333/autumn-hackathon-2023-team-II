@@ -52,7 +52,7 @@ export default function HomeScreen() {
           <Image source={require('../../assets/meal-logo.png')} style={styles.logo} />
           <Text style={styles.headerText}>Welcome!</Text>
           <RecipeList recipes={recipes} />
-          {/* <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Preferences')}> */}
+          
           <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Cravings')}>
             <Text style={styles.buttonText}>Let's CollaborEat</Text>
             <Ionicons name="arrow-forward" size={24} color="white" />

@@ -3,7 +3,8 @@ import { SafeAreaView, View, Text, TouchableOpacity, StyleSheet, ScrollView } fr
 import { AntDesign } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 
-function PreferencesScreen({ navigation }) {
+
+function PreferencesScreen({ onComplete }) {
   const [selectedHealthLabels, setSelectedHealthLabels] = useState([]);
   const [selectedDietLabels, setSelectedDietLabels] = useState([]);
   const [selectedCuisines, setSelectedCuisines] = useState([]);
@@ -14,6 +15,8 @@ function PreferencesScreen({ navigation }) {
   const healthLabels = ["Vegetarian", "Vegan", "Pescatarian", "Peanut-Free", "Dairy-Free", "Alcohol-Free", "Wheat-Free"];
   const cuisineType = ["American", "Asian", "British", "Caribbean", "Chinese", "Italian", "Mexican", "Japanese", "Indian"];
   const dishType = ["Biscuits and Cookies", "Bread", "Cereals", "Desserts", "Drinks", "Main Course"];
+
+
 
   const toggleSelection = (label, step) => {
   
@@ -51,12 +54,14 @@ function PreferencesScreen({ navigation }) {
     }
 } 
 
-const handleFinishSelections = () => {
-    console.log("Diet Labels:", selectedDietLabels);
-    console.log("Health Labels:", selectedHealthLabels);
-    console.log("Cuisines:", selectedCuisines);
-    console.log("Dish Types:", selectedDishTypes);
-};
+// const handleFinishSelections = () => {
+//     console.log("Diet Labels:", selectedDietLabels);
+//     console.log("Health Labels:", selectedHealthLabels);
+//     console.log("Cuisines:", selectedCuisines);
+//     console.log("Dish Types:", selectedDishTypes);
+//     onComplete
+//     navigation.navigate('Home')
+// };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -157,7 +162,7 @@ const handleFinishSelections = () => {
           {currentStep === 4 && (
             <TouchableOpacity
               style={styles.finishButton}
-              onPress={handleFinishSelections}
+              onPress={onComplete}
             >
               <Text style={styles.finishButtonText}>Save Preferences</Text>
             </TouchableOpacity>

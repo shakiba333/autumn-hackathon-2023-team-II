@@ -109,7 +109,7 @@ function Navigation() {
       {userInfo ? (
         <NavigationContainer>
           {showOnboarding ? (
-            <PreferenceScreen onComplete={handleOnboardingComplete} />
+            <PreferencesScreen onComplete={handleOnboardingComplete} />
           ) : (
             <Stack.Navigator headerMode="none">
               <Stack.Screen name="Home" component={TabGroup} />
