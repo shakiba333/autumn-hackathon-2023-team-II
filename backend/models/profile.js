@@ -11,6 +11,14 @@ const profileSchema = new Schema(
       type: [String],
       required: true,
     },
+    cuisine: {
+      type: [String],
+      required: true,
+    },
+    dish: {
+      type: [String],
+      required: true,
+    },
     groups: [
       {
         type: Schema.Types.ObjectId,
