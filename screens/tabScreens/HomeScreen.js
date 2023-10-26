@@ -5,23 +5,25 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import axios from 'axios';
 import RecipeList from '../../components/RecipeList';
+import { useNavigation } from '@react-navigation/native';
 
 export default function HomeScreen() {
   const [isLoading, setIsLoading] = useState(true);
   const [recipes, setRecipes] = useState([]);
   const foodItems = ['chicken', 'pasta', 'salad', 'sushi', 'pizza', 'burger', 'soup', 'taco', 'sandwich', 'steak'];
   const randomFood = foodItems[Math.floor(Math.random() * foodItems.length)];
-  console.log(randomFood)
-  const randomNumber = Math.floor(Math.random() * 20);
+  let randomNumber = Math.floor(Math.random() * 20);
+  randomNumber = randomNumber < 4 ? 4 : randomNumber;
+  const navigation = useNavigation();
+
 
   useEffect(() => {
     const edamamApiUrl = `https://api.edamam.com/api/recipes/v2?type=public&q=${randomFood}&app_id=41abb1f4&app_key=375f32061b6e7ab61e5b1808f4469c1e`;
     axios.get(edamamApiUrl)
       .then(response => {
         const recipeData = response.data.hits || [];
-        const sliceStart = randomNumber - 4;
         const sliceEnd = randomNumber;
-        console.log(recipeData.slice(sliceStart, sliceEnd));
+        const sliceStart = randomNumber - 4;
         setRecipes(recipeData.slice(sliceStart, sliceEnd));
         setIsLoading(false);
       })
@@ -49,7 +51,7 @@ export default function HomeScreen() {
           <Image source={require('../../assets/meal-logo.png')} style={styles.logo} />
           <Text style={styles.headerText}>Welcome!</Text>
           <RecipeList recipes={recipes} />
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Cravings')}>
             <Text style={styles.buttonText}>Let's CollaborEat</Text>
             <Ionicons name="arrow-forward" size={24} color="white" />
           </TouchableOpacity>
@@ -87,23 +89,6 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
   },
-  // divContainer: {
-  //   flexDirection: 'row',
-  //   justifyContent: 'center',
-  //   paddingHorizontal: 10,
-  //   width: '100%',
-  //   marginBottom: 20,
-  //   flexWrap: 'wrap',
-  // },
-  // div: {
-  //   flexBasis: '45%',
-  //   height: 100,
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  //   backgroundColor: 'lightgray',
-  //   margin: 10,
-  //   borderRadius: 10,
-  // },
   button: {
     flexDirection: 'row',
     backgroundColor: 'rgb(149, 184, 57)',
@@ -113,7 +98,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 35,
     borderRadius: 10,
     maxWidth: 'max-content',
-    marginBottom: 20
+    marginVertical: 20
   },
   buttonText: {
     color: 'white',
