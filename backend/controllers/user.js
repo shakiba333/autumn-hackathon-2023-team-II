@@ -27,6 +27,7 @@ async function create(req, res) {
       name: req.body.name,
       email: req.body.email,
       avatar: req.body.picture,
+      profile: req.body.profile
     });
 
     res.status(200).json(newUser);

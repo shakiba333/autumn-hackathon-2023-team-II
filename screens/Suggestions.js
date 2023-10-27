@@ -13,12 +13,8 @@ import { postMeal, deleteMealByEdamamId } from "../services/meal";
 function Suggestions({ selectedMeal }) {
   const [recipes, setRecipes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  let randomNumber = Math.floor(Math.random() * 20);
-  randomNumber = randomNumber < 4 ? 4 : randomNumber;
-  // const navigation = useNavigation();
   const iconName = "add-circle";
   const [selectedRecipes, setSelectedRecipes] = useState([]);
-
   const [shouldPostMeal, setShouldPostMeal] = useState(false);
   const [shouldDeleteMeal, setShouldDeleteMeal] = useState(false);
   const [saveFormattedMeal, setSaveFormattedMeal] = useState({
@@ -50,11 +46,17 @@ function Suggestions({ selectedMeal }) {
       .get(edamamApiUrl)
       .then((response) => {
         const recipeData = response.data.hits || [];
-        const sliceEnd = randomNumber;
-        const sliceStart = randomNumber - 4;
-        setRecipes(recipeData.slice(sliceStart, sliceEnd));
-        console.log(recipeData.slice(sliceStart, sliceEnd));
-
+        console.log(recipeData.length, "length")
+        if (recipeData.length < 6) {
+          setRecipes(recipeData);
+        } else {
+          let randomNumber = Math.floor(Math.random() * recipeData.length);
+          randomNumber = randomNumber < 4 ? 4 : randomNumber;
+          const sliceEnd = randomNumber;
+          const sliceStart = randomNumber - 4;
+          console.log(sliceEnd, sliceStart)
+          setRecipes(recipeData.slice(sliceStart, sliceEnd));
+        }
         setTimeout(() => setIsLoading(false), 3000);
       })
       .catch((error) => {
@@ -79,7 +81,6 @@ function Suggestions({ selectedMeal }) {
     const index = selectedRecipes.findIndex(
       (selectedRecipe) => selectedRecipe.recipe.uri === recipe.recipe.uri
     );
-    console.log(index);
     if (index === -1) {
       setSelectedRecipes([...selectedRecipes, recipe]);
       setSaveFormattedMeal((prevSaveFormattedMeal) => {
