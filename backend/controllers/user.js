@@ -9,7 +9,7 @@ module.exports = {
 
 async function create(req, res) {
   try {
-    console.log(req.body)
+    console.log(req.body);
     const user = await User.findOne({ googleId: req.body.googleId });
 
     if (user) {
