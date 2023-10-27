@@ -5,6 +5,7 @@ module.exports = {
   index,
   showGroup,
   updateGroup,
+  updateGroupMeals,
   deleteGroup,
 };
 
@@ -39,6 +40,35 @@ async function updateGroup(req, res) {
     );
     res.status(200).json(updatedGroup);
   } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+async function updateGroupMeals(req, res) {
+  try {
+    const group = await Group.findById(req.params.id);
+    const existingMeals = [...group.meals];
+    const newMealIndex = existingMeals.findIndex((meal) =>
+      meal._id.equals(req.params.mid)
+    );
+
+    if (newMealIndex === -1) {
+      existingMeals.push(req.params.mid);
+
+      // Update group with the modified meals array
+      group.meals = existingMeals;
+      await group.save();
+      res.status(200).json({ message: "Meal added successfully" });
+    } else {
+      existingMeals.splice(newMealIndex, 1);
+
+      // Update group with the modified meals array
+      group.meals = existingMeals;
+      await group.save();
+      res.status(200).json({ message: "Meal removed successfully" });
+    }
+  } catch (error) {
+    console.log(error);
     res.status(500).json({ error: "Internal server error" });
   }
 }

@@ -6,6 +6,7 @@ router.post("/", groupCtrl.createGroup);
 router.get("/", groupCtrl.index);
 router.get("/:id", groupCtrl.showGroup);
 router.put("/:id", groupCtrl.updateGroup);
+router.put("/meal/:id/:mid", groupCtrl.updateGroupMeals);
 router.delete("/:id", groupCtrl.deleteGroup);
 
 module.exports = router;
