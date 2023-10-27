@@ -1,13 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useState, useEffect } from "react";
-import {
-  SafeAreaView,
-  Text,
-  View,
-  TouchableOpacity,
-  Image,
-  StyleSheet,
-} from "react-native";
+import { SafeAreaView, Text, View, TouchableOpacity, Image, StyleSheet } from "react-native";
 import AddMembersScreen from "./AddMembersScreen";
 import { Ionicons } from '@expo/vector-icons';
 import Suggestions from "./Suggestions";
@@ -15,13 +8,13 @@ import Suggestions from "./Suggestions";
 function Cravings({ navigation }) {
   const [selectedMeal, setSelectedMeal] = useState(null);
   const [currentStep, setCurrentStep] = useState(1);
-
+  
   const mealTypes = [
-    { label: "Breakfast", image: require("../assets/images/breakfast.jpg") },
-    { label: "Brunch", image: require("../assets/images/brunch.jpg") },
-    { label: "Lunch/Dinner", image: require("../assets/images/linner.jpg") },
-    { label: "Snack", image: require("../assets/images/snack.jpg") },
-    { label: "Teatime", image: require("../assets/images/teatime.jpg") },
+    { label: "Breakfast", image: require('../assets/images/breakfast.jpg') },
+    { label: "Brunch", image: require('../assets/images/brunch.jpg') },
+    { label: "Lunch/Dinner", image: require('../assets/images/linner.jpg') },
+    { label: "Snack", image: require('../assets/images/snack.jpg') },
+    { label: "Teatime", image: require('../assets/images/teatime.jpg') },
   ];
   
 
@@ -30,8 +23,6 @@ function Cravings({ navigation }) {
     console.log(mealType.label);
     setSelectedMeal(mealType.label);
     setCurrentStep(currentStep + 1);
-    console.log(selectedMeal);
-    navigation.navigate("Suggestions");
   };
 
   const getSuggestions = () => {
@@ -48,7 +39,7 @@ function Cravings({ navigation }) {
               key={index}
               style={[
                 styles.mealButton,
-                selectedMeal === mealType.label && styles.selectedMealButton,
+                selectedMeal === mealType.label && styles.selectedMealButton
               ]}
               onPress={() => handleMealSelection(mealType)}
             >
@@ -77,19 +68,19 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#FFF",
+    backgroundColor: '#FFF'
   },
   heading: {
     fontSize: 20,
     marginBottom: 20,
     fontWeight: 700,
-    width: 200,
-    textAlign: "center",
+    width: 200, 
+    textAlign: 'center',
   },
   mealButton: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: 'space-between',
     marginVertical: 10,
     padding: 10,
     borderWidth: 1,
@@ -99,16 +90,16 @@ const styles = StyleSheet.create({
     width: 305,
     paddingHorizontal: 16,
     boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-    backgroundColor: "rgb(182,126,41)",
+    backgroundColor: 'rgb(182,126,41)'
   },
   selectedMealButton: {
-    backgroundColor: "rgb(149, 184, 57)",
+    backgroundColor: "rgb(149, 184, 57)"
   },
   buttonImage: {
     width: 40,
     height: 40,
     borderRadius: 100,
-    objectFit: "fill",
+    objectFit: 'fill'
   },
   buttonLabel: {
     fontSize: 16,
