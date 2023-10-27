@@ -3,10 +3,11 @@ import React, { useState, useEffect } from "react";
 import { SafeAreaView, Text, View, TouchableOpacity, Image, StyleSheet } from "react-native";
 import AddMembersScreen from "./AddMembersScreen";
 import { Ionicons } from '@expo/vector-icons';
+import Suggestions from "./Suggestions";
 
 function Cravings({ navigation }) {
   const [selectedMeal, setSelectedMeal] = useState(null);
-  const [cravingsScreen, setCravingsScreen] = useState(true);
+  const [currentStep, setCurrentStep] = useState(1);
   
   const mealTypes = [
     { label: "Breakfast", image: require('../assets/images/breakfast.jpg') },
@@ -21,17 +22,16 @@ function Cravings({ navigation }) {
   const handleMealSelection = (mealType) => {
     console.log(mealType.label);
     setSelectedMeal(mealType.label);
-    setCravingsScreen(false)
-
+    setCurrentStep(currentStep + 1);
   };
 
   const getSuggestions = () => {
-    navigation.navigate('Suggestions');
+    setCurrentStep(currentStep + 1);;
   }
 
   return (
     <SafeAreaView style={styles.container}>
-      {cravingsScreen ? (
+      {currentStep === 1 && (
         <>
           <Text style={styles.heading}>What type of meal are we having?</Text>
           {mealTypes.map((mealType, index) => (
@@ -42,14 +42,14 @@ function Cravings({ navigation }) {
                 selectedMeal === mealType.label && styles.selectedMealButton
               ]}
               onPress={() => handleMealSelection(mealType)}
-              // onPress={() => setCravingsScreen(false)}
             >
               <Text style={styles.buttonLabel}>{mealType.label}</Text>
               <Image source={mealType.image} style={styles.buttonImage} />
             </TouchableOpacity>
           ))}
         </>
-      ) : (
+      )}
+      {currentStep === 2 && (
         <>
           <AddMembersScreen />
           <TouchableOpacity style={styles.submitButton} onPress={() => getSuggestions()}>
@@ -58,6 +58,7 @@ function Cravings({ navigation }) {
           </TouchableOpacity>
         </>
       )}
+      {currentStep === 3 && <Suggestions selectedMeal={selectedMeal}/>}
     </SafeAreaView>
   );
 }  
