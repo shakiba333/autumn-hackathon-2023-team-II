@@ -20,6 +20,9 @@ export default function HomeScreen() {
   randomNumber = randomNumber < 4 ? 4 : randomNumber;
   const navigation = useNavigation();
 
+  const iconName = "more-horiz"
+  const iconColor = "red"
+
 
   useEffect(() => {
     const edamamApiUrl = `https://api.edamam.com/api/recipes/v2?type=public&q=${randomFood}&app_id=41abb1f4&app_key=375f32061b6e7ab61e5b1808f4469c1e`;
@@ -58,7 +61,7 @@ export default function HomeScreen() {
         >
           <Image source={require('../../assets/meal-logo.png')} style={styles.logo} />
           <Text style={styles.headerText}>Welcome! {process.env.REACT_APP_API}</Text>
-          <RecipeList recipes={recipes} />
+          <RecipeList recipes={recipes} iconColor={iconColor} iconName={iconName} />
 
           <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Cravings')}>
             <Text style={styles.buttonText}>Let's CollaborEat</Text>

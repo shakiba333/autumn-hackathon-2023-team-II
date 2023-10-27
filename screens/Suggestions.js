@@ -14,6 +14,9 @@ function Suggestions() {
   let randomNumber = Math.floor(Math.random() * 20);
   randomNumber = randomNumber < 4 ? 4 : randomNumber;
   // const navigation = useNavigation();
+  const iconName = 'add-circle'
+  const iconColor = ''
+  const [selectedRecipes, setSelectedRecipes] = useState([])
 
   useEffect(() => {
     const edamamApiUrl = `https://api.edamam.com/api/recipes/v2?type=public&q=${randomFood}&app_id=41abb1f4&app_key=375f32061b6e7ab61e5b1808f4469c1e`;
@@ -33,6 +36,19 @@ function Suggestions() {
       });
   }, []);
 
+  const handleRecipeSelect = (recipe) => {
+    const index = selectedRecipes.findIndex((selectedRecipe) => selectedRecipe.uri === recipe.uri);
+    if (index === -1) {
+      setSelectedRecipes([...selectedRecipes, recipe]);
+    } else {
+      const newSelectedRecipes = [...selectedRecipes];
+      newSelectedRecipes.splice(index, 1);
+      setSelectedRecipes(newSelectedRecipes);
+    }
+  }
+
+  console.log(selectedRecipes)
+
   if (isLoading) {
     return (
     
@@ -45,7 +61,7 @@ function Suggestions() {
   return (
     <View style={styles.container}>
       <Text style={styles.headerText}>Meal Suggestions</Text>
-       <RecipeList recipes={recipes} />
+      <RecipeList recipes={recipes} iconColor={iconColor} iconName={iconName} onSelect={handleRecipeSelect} />
        <TouchableOpacity style={styles.button}>
             <Text style={styles.buttonText}>Save</Text>
             <Ionicons name="arrow-forward" size={24} color="white" />
