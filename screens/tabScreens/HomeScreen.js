@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  Pressable,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -17,6 +18,7 @@ import { useNavigation } from "@react-navigation/native";
 import { REACT_APP_API } from "@env";
 import LoadingDots from "react-native-loading-dots";
 import { postMeal, deleteMealByEdamamId } from "../../services/meal";
+import { getAuth, signOut } from "firebase/auth";
 
 export default function HomeScreen() {
   console.log("dotenv " + process.env.REACT_APP_EDAMAM_APPLICATION_ID);
@@ -59,6 +61,8 @@ export default function HomeScreen() {
 
   const iconName = "more-horiz";
   const iconColor = "red";
+
+  const auth = getAuth();
 
   useEffect(() => {
     const edamamApiUrl = `https://api.edamam.com/api/recipes/v2?type=public&q=${randomFood}&app_id=41abb1f4&app_key=375f32061b6e7ab61e5b1808f4469c1e`;
@@ -123,6 +127,14 @@ export default function HomeScreen() {
   };
   console.log(selectedRecipes);
 
+  const handleSignOut = () => {
+    signOut(auth).then(() => {
+      // Sign-out successful.
+    }).catch((error) => {
+      // An error happened.
+    });
+  }
+
   if (isLoading) {
     return (
       <SafeAreaView style={styles.loadingContainer}>
@@ -144,6 +156,7 @@ export default function HomeScreen() {
           colors={["#EAAD37", "rgba(255, 255, 255, 0.00)"]}
           style={styles.gradient}
         >
+          <Pressable onPress={handleSignOut}><Text>Sign Out</Text></Pressable>
           <Image
             source={require("../../assets/meal-logo.png")}
             style={styles.logo}
