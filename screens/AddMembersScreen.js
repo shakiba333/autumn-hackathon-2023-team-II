@@ -7,11 +7,11 @@ import { Feather } from '@expo/vector-icons';
 const AddMembersScreen = ({ onComplete }) => {
     const [selectedFriends, setSelectedFriends] = useState([])
     const friends = [
-        { name: "Mary", image: require('../assets/images/breakfast.jpg') },
-        { name: "Joe", image: require('../assets/images/brunch.jpg') },
-        { name: "Mark", image: require('../assets/images/linner.jpg') },
-        { name: "John", image: require('../assets/images/snack.jpg') },
-        { name: "Steph", image: require('../assets/images/teatime.jpg') },
+        { name: "Mary", image: require('../assets/images/mary.jpg') },
+        { name: "Joe", image: require('../assets/images/joe.jpg') },
+        { name: "Mark", image: require('../assets/images/mark.jpg') },
+        { name: "John", image: require('../assets/images/john.jpg') },
+        { name: "Steph", image: require('../assets/images/steph.jpg') },
       ];
 
   return (
