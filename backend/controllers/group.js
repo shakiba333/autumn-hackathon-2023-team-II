@@ -4,8 +4,8 @@ module.exports = {
   createGroup,
   index,
   showGroup,
-  deleteGroup,
   updateGroup,
+  deleteGroup,
 };
 
 async function createGroup(req, res) {
