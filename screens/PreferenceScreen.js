@@ -18,26 +18,7 @@ function PreferencesScreen({ onComplete }) {
   const dietLabels = ["Balanced", "High-Fiber", "High-Protein", "Low-Carb", "Low-Fat", "Low-Sodium"];
   const healthLabels = ["Vegetarian", "Vegan", "Pescatarian", "Peanut-Free", "Dairy-Free", "Alcohol-Free", "Wheat-Free"];
   const cuisineType = ["American", "Asian", "British", "Caribbean", "Chinese", "Italian", "Mexican", "Japanese", "Indian"];
-  const dishType = ["Biscuits and Cookies", "Bread", "Cereals", "Desserts", "Drinks", "Main Course"];
-
-  useEffect(() => {
-    const fetchUserToken = async () => {
-      try {
-        const token = await AsyncStorage.getItem('@user');
-        if (token) {
-          const googleInfo = JSON.parse(token);
-          setUser(googleInfo)
-          const user = await getUser(googleInfo.email)
-          setUser(user)
-          console.log(user)
-        }
-      } catch (error) {
-        console.error('Error fetching user token:', error);
-      }
-    };
-
-    fetchUserToken();
-  }, []);
+  const dishType = ["Biscuits and Cookies", "Bread", "Cereals", "Desserts", "Drinks", "Main Course"]
 
 
   const toggleSelection = (label, step) => {
@@ -78,17 +59,23 @@ function PreferencesScreen({ onComplete }) {
 
 const handleFinishSelections = async () => {
 
+    const preferences = {
+      diet: selectedDietLabels,
+      health: selectedHealthLabels,
+      cuisine: selectedCuisines,
+      dish: selectedDishTypes,
+    }
     try {
-      const preferences = {
-        diet: selectedDietLabels,
-        health: selectedHealthLabels,
-        cuisine: selectedCuisines,
-        dish: selectedDishTypes,
+      const token = await AsyncStorage.getItem('@user');
+      if (token) {
+          const googleInfo = JSON.parse(token);
+          const userToken = await getUser(googleInfo.email)
+          console.log(userToken)
+          await updateProfilePreferences(userToken.profile?._id, preferences)
       }
-      updateProfilePreferences(user.profile._id, preferences)
       onComplete()
     } catch (err) {
-      console.log('error', error)
+      console.log('error', err)
     }
 
 };
