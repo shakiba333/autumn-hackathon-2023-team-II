@@ -447,13 +447,10 @@ function Login() {
               </TouchableOpacity> */}
           <View>
             <Image
-              source={require("./assets/images/logo.png")}
+              source={require("./assets/meal-logo.png")}
               style={styles.logo}
             />
-            <Text style={styles.mainHeader}>
-              Collabor
-              <Text style={{ color: "#EAAD37" }}>Eat</Text>
-            </Text>
+            
           </View>
           <View>
             <View style={styles.inputField}>
