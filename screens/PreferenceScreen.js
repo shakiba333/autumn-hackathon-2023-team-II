@@ -2,7 +2,9 @@ import { useState, useEffect } from "react";
 import { SafeAreaView, View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
 import { AntDesign } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
-
+import { getUser } from '../services/user'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { updateProfilePreferences } from '../services/profile' 
 
 function PreferencesScreen({ onComplete }) {
   const [selectedHealthLabels, setSelectedHealthLabels] = useState([]);
@@ -10,12 +12,32 @@ function PreferencesScreen({ onComplete }) {
   const [selectedCuisines, setSelectedCuisines] = useState([]);
   const [selectedDishTypes, setSelectedDishTypes] = useState([]);
   const [currentStep, setCurrentStep] = useState(1);
+  const [user, setUser] = useState(null);
+
 
   const dietLabels = ["Balanced", "High-Fiber", "High-Protein", "Low-Carb", "Low-Fat", "Low-Sodium"];
   const healthLabels = ["Vegetarian", "Vegan", "Pescatarian", "Peanut-Free", "Dairy-Free", "Alcohol-Free", "Wheat-Free"];
   const cuisineType = ["American", "Asian", "British", "Caribbean", "Chinese", "Italian", "Mexican", "Japanese", "Indian"];
   const dishType = ["Biscuits and Cookies", "Bread", "Cereals", "Desserts", "Drinks", "Main Course"];
 
+  useEffect(() => {
+    const fetchUserToken = async () => {
+      try {
+        const token = await AsyncStorage.getItem('@user');
+        if (token) {
+          const googleInfo = JSON.parse(token);
+          setUser(googleInfo)
+          const user = await getUser(googleInfo.email)
+          setUser(user)
+          console.log(user)
+        }
+      } catch (error) {
+        console.error('Error fetching user token:', error);
+      }
+    };
+
+    fetchUserToken();
+  }, []);
 
 
   const toggleSelection = (label, step) => {
@@ -54,14 +76,22 @@ function PreferencesScreen({ onComplete }) {
     }
 } 
 
-// const handleFinishSelections = () => {
-//     console.log("Diet Labels:", selectedDietLabels);
-//     console.log("Health Labels:", selectedHealthLabels);
-//     console.log("Cuisines:", selectedCuisines);
-//     console.log("Dish Types:", selectedDishTypes);
-//     onComplete
-//     navigation.navigate('Home')
-// };
+const handleFinishSelections = async () => {
+
+    try {
+      const preferences = {
+        diet: selectedDietLabels,
+        health: selectedHealthLabels,
+        cuisine: selectedCuisines,
+        dish: selectedDishTypes,
+      }
+      updateProfilePreferences(user.profile._id, preferences)
+      onComplete()
+    } catch (err) {
+      console.log('error', error)
+    }
+
+};
 
   return (
     <SafeAreaView style={styles.container}>
@@ -162,7 +192,8 @@ function PreferencesScreen({ onComplete }) {
           {currentStep === 4 && (
             <TouchableOpacity
               style={styles.finishButton}
-              onPress={onComplete}
+              onPress={handleFinishSelections}
+              // onPress={onComplete}
             >
               <Text style={styles.finishButtonText}>Save Preferences</Text>
             </TouchableOpacity>
