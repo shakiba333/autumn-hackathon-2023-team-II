@@ -7,6 +7,7 @@ import AuthScreen from "./screens/AuthScreen";
 import ExploreScreen from "./screens/tabScreens/ExploreScreen";
 import HomeScreen from "./screens/tabScreens/HomeScreen";
 import FavouriteScreen from "./screens/tabScreens/FavouriteScreen";
+import Suggestions from "./screens/Suggestions";
 import ProfileScreen from "./screens/tabScreens/ProfileScreen";
 import Cravings from "./screens/Cravings";
 import {
@@ -144,6 +145,7 @@ function Navigation() {
           ) : (
             <Stack.Navigator headerMode="none">
               <Stack.Screen name="Home" component={TabGroup} />
+              <Stack.Screen name="Suggestions" component={Suggestions} />
             </Stack.Navigator>
           )}
         </NavigationContainer>
