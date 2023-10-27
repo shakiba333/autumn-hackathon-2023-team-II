@@ -1,14 +1,10 @@
 import { useState, useEffect } from "react";
-import {
-  SafeAreaView,
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-} from "react-native";
-import { AntDesign } from "@expo/vector-icons";
-import { Feather } from "@expo/vector-icons";
+import { SafeAreaView, View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
+import { AntDesign } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
+import { getUser } from '../services/user'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { updateProfilePreferences } from '../services/profile' 
 
 function PreferencesScreen({ onComplete }) {
   const [selectedHealthLabels, setSelectedHealthLabels] = useState([]);
@@ -16,43 +12,33 @@ function PreferencesScreen({ onComplete }) {
   const [selectedCuisines, setSelectedCuisines] = useState([]);
   const [selectedDishTypes, setSelectedDishTypes] = useState([]);
   const [currentStep, setCurrentStep] = useState(1);
+  const [user, setUser] = useState(null);
 
-  const dietLabels = [
-    "Balanced",
-    "High-Fiber",
-    "High-Protein",
-    "Low-Carb",
-    "Low-Fat",
-    "Low-Sodium",
-  ];
-  const healthLabels = [
-    "Vegetarian",
-    "Vegan",
-    "Pescatarian",
-    "Peanut-Free",
-    "Dairy-Free",
-    "Alcohol-Free",
-    "Wheat-Free",
-  ];
-  const cuisineType = [
-    "American",
-    "Asian",
-    "British",
-    "Caribbean",
-    "Chinese",
-    "Italian",
-    "Mexican",
-    "Japanese",
-    "Indian",
-  ];
-  const dishType = [
-    "Biscuits and Cookies",
-    "Bread",
-    "Cereals",
-    "Desserts",
-    "Drinks",
-    "Main Course",
-  ];
+
+  const dietLabels = ["Balanced", "High-Fiber", "High-Protein", "Low-Carb", "Low-Fat", "Low-Sodium"];
+  const healthLabels = ["Vegetarian", "Vegan", "Pescatarian", "Peanut-Free", "Dairy-Free", "Alcohol-Free", "Wheat-Free"];
+  const cuisineType = ["American", "Asian", "British", "Caribbean", "Chinese", "Italian", "Mexican", "Japanese", "Indian"];
+  const dishType = ["Biscuits and Cookies", "Bread", "Cereals", "Desserts", "Drinks", "Main Course"];
+
+  useEffect(() => {
+    const fetchUserToken = async () => {
+      try {
+        const token = await AsyncStorage.getItem('@user');
+        if (token) {
+          const googleInfo = JSON.parse(token);
+          setUser(googleInfo)
+          const user = await getUser(googleInfo.email)
+          setUser(user)
+          console.log(user)
+        }
+      } catch (error) {
+        console.error('Error fetching user token:', error);
+      }
+    };
+
+    fetchUserToken();
+  }, []);
+
 
   const toggleSelection = (label, step) => {
     switch (step) {
@@ -93,112 +79,128 @@ function PreferencesScreen({ onComplete }) {
     }
   };
 
-  // const handleFinishSelections = () => {
-  //     console.log("Diet Labels:", selectedDietLabels);
-  //     console.log("Health Labels:", selectedHealthLabels);
-  //     console.log("Cuisines:", selectedCuisines);
-  //     console.log("Dish Types:", selectedDishTypes);
-  //     onComplete
-  //     navigation.navigate('Home')
-  // };
+const handleFinishSelections = async () => {
+
+    try {
+      const preferences = {
+        diet: selectedDietLabels,
+        health: selectedHealthLabels,
+        cuisine: selectedCuisines,
+        dish: selectedDishTypes,
+      }
+      updateProfilePreferences(user.profile._id, preferences)
+      onComplete()
+    } catch (err) {
+      console.log('error', error)
+    }
+
+};
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.sectionHeader}>Step {currentStep} of 4</Text>
-        {currentStep === 1 && (
-          <>
-            <Text style={styles.labelHeader}>Select your diet type</Text>
-            {dietLabels.map((label, index) => (
-              <TouchableOpacity
-                key={index}
-                style={[styles.option]}
-                onPress={() => toggleSelection(label, currentStep)}
-              >
-                <Text style={styles.optionText}>{label}</Text>
-                {selectedDietLabels.includes(label) ? (
-                  <Feather name="check-circle" size={20} color="#16A736" />
-                ) : (
-                  <AntDesign name="pluscircleo" size={20} color="black" />
-                )}
-              </TouchableOpacity>
-            ))}
-          </>
-        )}
-        {currentStep === 2 && (
-          <>
-            <Text style={styles.labelHeader}>Select your health labels</Text>
-            {healthLabels.map((label, index) => (
-              <TouchableOpacity
-                key={index}
-                style={[styles.option]}
-                onPress={() => toggleSelection(label, currentStep)}
-              >
-                <Text style={styles.optionText}>{label}</Text>
-                {selectedHealthLabels.includes(label) ? (
-                  <Feather name="check-circle" size={20} color="#16A736" />
-                ) : (
-                  <AntDesign name="pluscircleo" size={20} color="black" />
-                )}
-              </TouchableOpacity>
-            ))}
-          </>
-        )}
-        {currentStep === 3 && (
-          <>
-            <Text style={styles.labelHeader}>
-              Select your preferred cuisines
-            </Text>
-            {cuisineType.map((label, index) => (
-              <TouchableOpacity
-                key={index}
-                style={[styles.option]}
-                onPress={() => toggleSelection(label, currentStep)}
-              >
-                <Text style={styles.optionText}>{label}</Text>
-                {selectedCuisines.includes(label) ? (
-                  <Feather name="check-circle" size={20} color="#16A736" />
-                ) : (
-                  <AntDesign name="pluscircleo" size={20} color="black" />
-                )}
-              </TouchableOpacity>
-            ))}
-          </>
-        )}
-        {currentStep === 4 && (
-          <>
-            <Text style={styles.labelHeader}>
-              Select your preferred dish type
-            </Text>
-            {dishType.map((label, index) => (
-              <TouchableOpacity
-                key={index}
-                style={[styles.option]}
-                onPress={() => toggleSelection(label, currentStep)}
-              >
-                <Text style={styles.optionText}>{label}</Text>
-                {selectedDishTypes.includes(label) ? (
-                  <Feather name="check-circle" size={20} color="#16A736" />
-                ) : (
-                  <AntDesign name="pluscircleo" size={20} color="black" />
-                )}
-              </TouchableOpacity>
-            ))}
-          </>
-        )}
-        {currentStep < 4 && (
-          <TouchableOpacity
-            style={styles.nextButton}
-            onPress={() => setCurrentStep(currentStep + 1)}
-          >
-            <Text style={styles.nextButtonText}>Continue</Text>
-          </TouchableOpacity>
-        )}
-        {currentStep === 4 && (
-          <TouchableOpacity style={styles.finishButton} onPress={onComplete}>
-            <Text style={styles.finishButtonText}>Save Preferences</Text>
-          </TouchableOpacity>
-        )}
+          <Text style={styles.sectionHeader}>Step {currentStep} of 4</Text>
+          {currentStep === 1 && (
+            <>
+                <Text style={styles.labelHeader}>Select your diet type</Text>
+                {dietLabels.map((label, index) => (
+                <TouchableOpacity
+                    key={index}
+                    style={[
+                    styles.option,
+                    ]}
+                    onPress={() => toggleSelection(label, currentStep)}
+                >
+                    <Text style={styles.optionText}>{label}</Text>
+                    {selectedDietLabels.includes(label) ? (
+                        <Feather name="check-circle" size={20} color="#16A736" />
+                        ) : (
+                        <AntDesign name="pluscircleo" size={20} color="black" />
+                    )}
+                </TouchableOpacity>
+                ))}
+            </>
+          )}
+          {currentStep === 2 && (
+            <>
+                <Text style={styles.labelHeader}>Select your health labels</Text>
+                {healthLabels.map((label, index) => (
+                <TouchableOpacity
+                    key={index}
+                    style={[
+                    styles.option,
+                    ]}
+                    onPress={() => toggleSelection(label, currentStep)}
+                >
+                    <Text style={styles.optionText}>{label}</Text>
+                    {selectedHealthLabels.includes(label) ? (
+                        <Feather name="check-circle" size={20} color="#16A736" />
+                        ) : (
+                        <AntDesign name="pluscircleo" size={20} color="black" />
+                    )}
+                </TouchableOpacity>
+                ))}
+            </>
+          )}
+          {currentStep === 3 && (
+            <>
+                <Text style={styles.labelHeader}>Select your preferred cuisines</Text>
+                {cuisineType.map((label, index) => (
+                <TouchableOpacity
+                    key={index}
+                    style={[
+                    styles.option,
+                    ]}
+                    onPress={() => toggleSelection(label, currentStep)}
+                >
+                    <Text style={styles.optionText}>{label}</Text>
+                    {selectedCuisines.includes(label) ? (
+                        <Feather name="check-circle" size={20} color="#16A736" />
+                        ) : (
+                        <AntDesign name="pluscircleo" size={20} color="black" />
+                    )}
+                </TouchableOpacity>
+                ))}
+            </>
+          )}
+          {currentStep === 4 && (
+            <>
+                <Text style={styles.labelHeader}>Select your preferred dish type</Text>
+                {dishType.map((label, index) => (
+                <TouchableOpacity
+                    key={index}
+                    style={[
+                    styles.option,
+                    ]}
+                    onPress={() => toggleSelection(label, currentStep)}
+                >
+                    <Text style={styles.optionText}>{label}</Text>
+                    {selectedDishTypes.includes(label) ? (
+                        <Feather name="check-circle" size={20} color="#16A736" />
+                        ) : (
+                        <AntDesign name="pluscircleo" size={20} color="black" />
+                    )}
+                </TouchableOpacity>
+                ))}
+            </>
+          )}
+          {currentStep < 4 && (
+            <TouchableOpacity
+              style={styles.nextButton}
+              onPress={() => setCurrentStep(currentStep + 1)}
+            >
+              <Text style={styles.nextButtonText}>Continue</Text>
+            </TouchableOpacity>
+          )}
+          {currentStep === 4 && (
+            <TouchableOpacity
+              style={styles.finishButton}
+              onPress={handleFinishSelections}
+              // onPress={onComplete}
+            >
+              <Text style={styles.finishButtonText}>Save Preferences</Text>
+            </TouchableOpacity>
+          )}
       </ScrollView>
     </SafeAreaView>
   );
