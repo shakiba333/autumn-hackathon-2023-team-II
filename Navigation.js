@@ -55,6 +55,8 @@ function Navigation() {
       "356560269346-8m1hnjk7mpb9cfgg7ip0c83g0jb3ni0c.apps.googleusercontent.com",
   });
 
+  console.log(response)
+
   React.useEffect(() => {
     handleSignInWithGoogle();
   }, [response]);
