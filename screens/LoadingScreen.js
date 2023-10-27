@@ -21,7 +21,8 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       justifyContent: 'center',
       gap: 40,
-      flexDirection: 'column'
+      flexDirection: 'column',
+      width: '100vw'
     },
     logo: {
       width: 250,

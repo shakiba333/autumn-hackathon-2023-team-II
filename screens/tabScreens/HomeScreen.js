@@ -69,8 +69,8 @@ export default function HomeScreen() {
         const sliceEnd = randomNumber;
         const sliceStart = randomNumber - 4;
         setRecipes(recipeData.slice(sliceStart, sliceEnd));
-        console.log(recipeData.slice(sliceStart, sliceEnd));
         setTimeout(() => setIsLoading(false), 4000);
+        // setIsLoading(false)
       })
       .catch((error) => {
         console.error("Error fetching recipes:", error);

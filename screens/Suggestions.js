@@ -7,27 +7,13 @@ import { useNavigation } from "@react-navigation/native";
 import LoadingScreen from "./LoadingScreen";
 import { postMeal, deleteMealByEdamamId } from "../services/meal";
 
-function Suggestions() {
+function Suggestions({ selectedMeal }) {
   const [recipes, setRecipes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const foodItems = [
-    "chicken",
-    "pasta",
-    "salad",
-    "sushi",
-    "pizza",
-    "burger",
-    "soup",
-    "taco",
-    "sandwich",
-    "steak",
-  ];
-  const randomFood = foodItems[Math.floor(Math.random() * foodItems.length)];
   let randomNumber = Math.floor(Math.random() * 20);
   randomNumber = randomNumber < 4 ? 4 : randomNumber;
   // const navigation = useNavigation();
   const iconName = "add-circle";
-  console.log(recipes);
   const [selectedRecipes, setSelectedRecipes] = useState([]);
 
   const [shouldPostMeal, setShouldPostMeal] = useState(false);
@@ -46,7 +32,17 @@ function Suggestions() {
   const [deleteMeal, setDeleteMeal] = useState();
 
   useEffect(() => {
-    const edamamApiUrl = `https://api.edamam.com/api/recipes/v2?type=public&q=${randomFood}&app_id=41abb1f4&app_key=375f32061b6e7ab61e5b1808f4469c1e`;
+    console.log("selected was", selectedMeal);
+    let edamamApiUrl;
+    if (selectedMeal === "Teatime") {
+      edamamApiUrl = `https://api.edamam.com/api/recipes/v2?type=public&q=tea&app_id=41abb1f4&app_key=375f32061b6e7ab61e5b1808f4469c1e`;
+    } else if (selectedMeal === "Brunch") {
+      edamamApiUrl = `https://api.edamam.com/api/recipes/v2?type=public&q=brunch&app_id=41abb1f4&app_key=375f32061b6e7ab61e5b1808f4469c1e`;
+    } else if (selectedMeal === "Lunch/Dinner") {
+      edamamApiUrl = `https://api.edamam.com/api/recipes/v2?type=public&q=lunch&app_id=41abb1f4&app_key=375f32061b6e7ab61e5b1808f4469c1e`;
+    } else {
+      edamamApiUrl = `https://api.edamam.com/api/recipes/v2?type=public&q=steak%20bites&app_id=41abb1f4&app_key=375f32061b6e7ab61e5b1808f4469c1e&mealType=${selectedMeal}`;
+    }
     axios
       .get(edamamApiUrl)
       .then((response) => {
@@ -107,8 +103,6 @@ function Suggestions() {
       setShouldDeleteMeal(true);
     }
   };
-  console.log(selectedRecipes);
-
   console.log(selectedRecipes);
 
   if (isLoading) {
