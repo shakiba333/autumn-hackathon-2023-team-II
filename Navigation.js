@@ -420,20 +420,32 @@ function Login() {
 
   const onLogin = async () => {
     setloading(true);
-
-    // try {
-    if (email !== "" && password !== "") {
-      await signInWithEmailAndPassword(auth, email, password).catch((error) =>
-        setLoginError(error.message)
-      );
-    } else {
-      setLoginError("please enter all the fields");
+  
+    try {
+      if (email !== "" && password !== "") {
+        const user = await signInWithEmailAndPassword(auth, email, password);
+        const uid = user.user.uid;
+        const userData = {
+          email: email,
+          uid: uid,
+          // Add other user data as needed
+        };
+  
+        // Save user data to local storage
+        await AsyncStorage.setItem('userData', JSON.stringify(userData));
+  
+        // After saving the user data, you can navigate to the user's screen or perform other actions
+        // Here is where you would navigate to the user's screen or handle the successful login.
+        // For example, you can use navigation libraries like React Navigation to navigate to another screen.
+  
+      } else {
+        setLoginError("Please enter all the fields");
+      }
+    } catch (error) {
+      setLoginError(error.message);
     }
-    // } catch (error) {
-    // setLoginError(error.message);
-    // }
-
-    return setloading(false);
+  
+    setloading(false);
   };
 
   return (
@@ -599,6 +611,11 @@ function Register() {
 
             const userRef = addDoc(collection(db, "users"), data);
             // userRef.doc(uid).set(data);
+            AsyncStorage.setItem('userData', JSON.stringify(data)).then(() => {
+              // Data stored successfully, you can navigate to the user's screen or perform other actions here
+            }).catch((error) => {
+              // Handle the error if AsyncStorage fails
+            });
           }
         );
       } else {
