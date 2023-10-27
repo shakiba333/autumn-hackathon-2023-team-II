@@ -15,33 +15,34 @@ const LoadingScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "#EAA237",
-    height: "100vh",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 40,
-    flexDirection: "column",
-  },
-  logo: {
-    width: 250,
-    height: 250,
-  },
-  text: {
-    color: "#434242",
-    fontFamily: "Poppins",
-    fontSize: 24,
-    fontWeight: 500,
-  },
-  loadingScreen: {
-    flex: 1,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  dotsWrapper: {
-    width: 100,
-  },
+    container: {
+      backgroundColor: '#EAA237',
+      height: '100vh',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 40,
+      flexDirection: 'column',
+      width: '100vw'
+    },
+    logo: {
+      width: 250,
+      height: 250,
+    },
+    text: {
+        color: '#434242',
+        fontFamily: 'Poppins',
+        fontSize: 24,
+        fontWeight: 500,
+    },
+    loadingScreen: {
+        flex: 1,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      },
+      dotsWrapper: {
+        width: 100,
+      },
 });
 
 export default LoadingScreen;

@@ -4,33 +4,48 @@ import RecipeList from "../components/RecipeList";
 import axios from "axios";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 import LoadingScreen from "./LoadingScreen";
+import { postMeal, deleteMealByEdamamId } from "../services/meal";
 
-function Suggestions() {
+function Suggestions({ selectedMeal }) {
   const [recipes, setRecipes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const foodItems = [
-    "chicken",
-    "pasta",
-    "salad",
-    "sushi",
-    "pizza",
-    "burger",
-    "soup",
-    "taco",
-    "sandwich",
-    "steak",
-  ];
-  const randomFood = foodItems[Math.floor(Math.random() * foodItems.length)];
   let randomNumber = Math.floor(Math.random() * 20);
   randomNumber = randomNumber < 4 ? 4 : randomNumber;
   // const navigation = useNavigation();
   const iconName = "add-circle";
-  console.log(recipes);
   const [selectedRecipes, setSelectedRecipes] = useState([]);
 
+  const [shouldPostMeal, setShouldPostMeal] = useState(false);
+  const [shouldDeleteMeal, setShouldDeleteMeal] = useState(false);
+  const [saveFormattedMeal, setSaveFormattedMeal] = useState({
+    api_id: "",
+    uri: "",
+    label: "",
+    cuisineType: [],
+    numberOfIngredients: 0,
+    totalTime: 0,
+    shareAs: "",
+    date: "",
+    time: "",
+  });
+  const [deleteMeal, setDeleteMeal] = useState();
+
   useEffect(() => {
-    const edamamApiUrl = `https://api.edamam.com/api/recipes/v2?type=public&q=${randomFood}&app_id=41abb1f4&app_key=375f32061b6e7ab61e5b1808f4469c1e`;
+    console.log("selected was", selectedMeal);
+    let edamamApiUrl;
+    if (selectedMeal === "Teatime") {
+      edamamApiUrl = `https://api.edamam.com/api/recipes/v2?type=public&q=tea&app_id=41abb1f4&app_key=375f32061b6e7ab61e5b1808f4469c1e`;
+    } else if (selectedMeal === "Brunch") {
+      edamamApiUrl = `https://api.edamam.com/api/recipes/v2?type=public&q=brunch&app_id=41abb1f4&app_key=375f32061b6e7ab61e5b1808f4469c1e`;
+    } else if (selectedMeal === "Lunch/Dinner") {
+      edamamApiUrl = `https://api.edamam.com/api/recipes/v2?type=public&q=lunch&app_id=41abb1f4&app_key=375f32061b6e7ab61e5b1808f4469c1e`;
+    } else {
+      edamamApiUrl = `https://api.edamam.com/api/recipes/v2?type=public&q=steak%20bites&app_id=41abb1f4&app_key=375f32061b6e7ab61e5b1808f4469c1e&mealType=${selectedMeal}`;
+    }
     axios
       .get(edamamApiUrl)
       .then((response) => {
@@ -48,6 +63,18 @@ function Suggestions() {
       });
   }, []);
 
+  useEffect(() => {
+    if (shouldPostMeal) {
+      postMeal(saveFormattedMeal);
+    }
+  }, [saveFormattedMeal, shouldPostMeal]);
+
+  useEffect(() => {
+    if (shouldDeleteMeal) {
+      deleteMealByEdamamId(deleteMeal);
+    }
+  }, [deleteMeal, shouldDeleteMeal]);
+
   const handleRecipeSelect = (recipe) => {
     const index = selectedRecipes.findIndex(
       (selectedRecipe) => selectedRecipe.recipe.uri === recipe.recipe.uri
@@ -55,13 +82,30 @@ function Suggestions() {
     console.log(index);
     if (index === -1) {
       setSelectedRecipes([...selectedRecipes, recipe]);
+      setSaveFormattedMeal((prevSaveFormattedMeal) => {
+        return {
+          api_id: recipe.recipe.uri ? recipe.recipe.uri.split("_")[1] : "",
+          uri: recipe.recipe.uri,
+          label: recipe.recipe.label,
+          cuisineType: recipe.recipe.cuisineType,
+          numberOfIngredients: recipe.recipe.ingredients.length,
+          totalTime: recipe.recipe.totalTime,
+          shareAs: recipe.recipe.shareAs,
+          date: "",
+          time: "",
+        };
+      });
+      setShouldPostMeal(true);
     } else {
       const newSelectedRecipes = [...selectedRecipes];
+      setDeleteMeal((prevDeleteMeal) => {
+        return selectedRecipes[index].recipe.uri.split("_")[1];
+      });
       newSelectedRecipes.splice(index, 1);
       setSelectedRecipes(newSelectedRecipes);
+      setShouldDeleteMeal(true);
     }
   };
-
   console.log(selectedRecipes);
 
   if (isLoading) {

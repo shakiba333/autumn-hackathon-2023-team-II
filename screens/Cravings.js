@@ -8,9 +8,13 @@ import {
   Image,
   StyleSheet,
 } from "react-native";
+import AddMembersScreen from "./AddMembersScreen";
+import { Ionicons } from '@expo/vector-icons';
+import Suggestions from "./Suggestions";
 
 function Cravings({ navigation }) {
   const [selectedMeal, setSelectedMeal] = useState(null);
+  const [currentStep, setCurrentStep] = useState(1);
 
   const mealTypes = [
     { label: "Breakfast", image: require("../assets/images/breakfast.jpg") },
@@ -19,36 +23,54 @@ function Cravings({ navigation }) {
     { label: "Snack", image: require("../assets/images/snack.jpg") },
     { label: "Teatime", image: require("../assets/images/teatime.jpg") },
   ];
+  
 
-  useEffect(() => {
-    console.log(selectedMeal);
-  }, [selectedMeal]);
 
   const handleMealSelection = (mealType) => {
+    console.log(mealType.label);
     setSelectedMeal(mealType.label);
+    setCurrentStep(currentStep + 1);
     console.log(selectedMeal);
     navigation.navigate("Suggestions");
   };
 
+  const getSuggestions = () => {
+    setCurrentStep(currentStep + 1);;
+  }
+
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.heading}>What type of meal are we having?</Text>
-      {mealTypes.map((mealType, index) => (
-        <TouchableOpacity
-          key={index}
-          style={[
-            styles.mealButton,
-            selectedMeal === mealType.label && styles.selectedMealButton,
-          ]}
-          onPress={() => handleMealSelection(mealType)}
-        >
-          <Text style={styles.buttonLabel}>{mealType.label}</Text>
-          <Image source={mealType.image} style={styles.buttonImage} />
-        </TouchableOpacity>
-      ))}
+      {currentStep === 1 && (
+        <>
+          <Text style={styles.heading}>What type of meal are we having?</Text>
+          {mealTypes.map((mealType, index) => (
+            <TouchableOpacity
+              key={index}
+              style={[
+                styles.mealButton,
+                selectedMeal === mealType.label && styles.selectedMealButton,
+              ]}
+              onPress={() => handleMealSelection(mealType)}
+            >
+              <Text style={styles.buttonLabel}>{mealType.label}</Text>
+              <Image source={mealType.image} style={styles.buttonImage} />
+            </TouchableOpacity>
+          ))}
+        </>
+      )}
+      {currentStep === 2 && (
+        <>
+          <AddMembersScreen />
+          <TouchableOpacity style={styles.submitButton} onPress={() => getSuggestions()}>
+            <Text style={styles.submitButtonText}>Get Suggestions</Text>
+            <Ionicons name="arrow-forward" size={24} color="white" />
+          </TouchableOpacity>
+        </>
+      )}
+      {currentStep === 3 && <Suggestions selectedMeal={selectedMeal}/>}
     </SafeAreaView>
   );
-}
+}  
 
 const styles = StyleSheet.create({
   container: {
@@ -90,10 +112,27 @@ const styles = StyleSheet.create({
   },
   buttonLabel: {
     fontSize: 16,
-    color: "#FFF",
-    fontStyle: "normal",
-    fontWeight: "500",
-    fontFamily: "Poppins",
+    color: '#FFF',
+    fontStyle: 'normal',
+    fontWeight: '500',
+    fontFamily: 'Poppins'
+  },
+  submitButton: {
+    flexDirection: 'row',
+    backgroundColor: 'rgb(149, 184, 57)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 15,
+    paddingHorizontal: 35,
+    borderRadius: 10,
+    maxWidth: 'max-content',
+    marginVertical: 20
+  },
+  submitButtonText: {
+    color: 'white',
+    fontSize: 18,
+    marginRight: 10,
+    fontWeight: '600',
   },
 });
 

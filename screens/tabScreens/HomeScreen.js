@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
-  Pressable,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -17,7 +16,7 @@ import RecipeList from "../../components/RecipeList";
 import { useNavigation } from "@react-navigation/native";
 import { REACT_APP_API } from "@env";
 import LoadingDots from "react-native-loading-dots";
-import { getAuth, signOut } from "firebase/auth";
+import { postMeal, deleteMealByEdamamId } from "../../services/meal";
 
 export default function HomeScreen() {
   console.log("dotenv " + process.env.REACT_APP_EDAMAM_APPLICATION_ID);
@@ -41,20 +40,25 @@ export default function HomeScreen() {
   randomNumber = randomNumber < 4 ? 4 : randomNumber;
   const navigation = useNavigation();
 
+  const [selectedRecipes, setSelectedRecipes] = useState([]);
+
+  const [shouldPostMeal, setShouldPostMeal] = useState(false);
+  const [shouldDeleteMeal, setShouldDeleteMeal] = useState(false);
+  const [saveFormattedMeal, setSaveFormattedMeal] = useState({
+    api_id: "",
+    uri: "",
+    label: "",
+    cuisineType: [],
+    numberOfIngredients: 0,
+    totalTime: 0,
+    shareAs: "",
+    date: "",
+    time: "",
+  });
+  const [deleteMeal, setDeleteMeal] = useState();
+
   const iconName = "more-horiz";
   const iconColor = "red";
-
-  const auth = getAuth();
-
-  const handleSignOut = () => {
-    signOut(auth)
-      .then(() => {
-        // Sign-out successful.
-      })
-      .catch((error) => {
-        // An error happened.
-      });
-  };
 
   useEffect(() => {
     const edamamApiUrl = `https://api.edamam.com/api/recipes/v2?type=public&q=${randomFood}&app_id=41abb1f4&app_key=375f32061b6e7ab61e5b1808f4469c1e`;
@@ -65,14 +69,59 @@ export default function HomeScreen() {
         const sliceEnd = randomNumber;
         const sliceStart = randomNumber - 4;
         setRecipes(recipeData.slice(sliceStart, sliceEnd));
-        console.log(recipeData.slice(sliceStart, sliceEnd));
         setTimeout(() => setIsLoading(false), 4000);
+        // setIsLoading(false)
       })
       .catch((error) => {
         console.error("Error fetching recipes:", error);
         setIsLoading(false);
       });
   }, []);
+
+  useEffect(() => {
+    if (shouldPostMeal) {
+      postMeal(saveFormattedMeal);
+    }
+  }, [saveFormattedMeal, shouldPostMeal]);
+
+  useEffect(() => {
+    if (shouldDeleteMeal) {
+      deleteMealByEdamamId(deleteMeal);
+    }
+  }, [deleteMeal, shouldDeleteMeal]);
+
+  const handleRecipeSelect = (recipe) => {
+    const index = selectedRecipes.findIndex(
+      (selectedRecipe) => selectedRecipe.recipe.uri === recipe.recipe.uri
+    );
+    console.log(index);
+    if (index === -1) {
+      setSelectedRecipes([...selectedRecipes, recipe]);
+      setSaveFormattedMeal((prevSaveFormattedMeal) => {
+        return {
+          api_id: recipe.recipe.uri ? recipe.recipe.uri.split("_")[1] : "",
+          uri: recipe.recipe.uri,
+          label: recipe.recipe.label,
+          cuisineType: recipe.recipe.cuisineType,
+          numberOfIngredients: recipe.recipe.ingredients.length,
+          totalTime: recipe.recipe.totalTime,
+          shareAs: recipe.recipe.shareAs,
+          date: "",
+          time: "",
+        };
+      });
+      setShouldPostMeal(true);
+    } else {
+      const newSelectedRecipes = [...selectedRecipes];
+      setDeleteMeal((prevDeleteMeal) => {
+        return selectedRecipes[index].recipe.uri.split("_")[1];
+      });
+      newSelectedRecipes.splice(index, 1);
+      setSelectedRecipes(newSelectedRecipes);
+      setShouldDeleteMeal(true);
+    }
+  };
+  console.log(selectedRecipes);
 
   if (isLoading) {
     return (
@@ -95,11 +144,6 @@ export default function HomeScreen() {
           colors={["#EAAD37", "rgba(255, 255, 255, 0.00)"]}
           style={styles.gradient}
         >
-          <View>
-            <Pressable onPress={handleSignOut}>
-              <Text>Sign Out</Text>
-            </Pressable>
-          </View>
           <Image
             source={require("../../assets/meal-logo.png")}
             style={styles.logo}
@@ -111,6 +155,7 @@ export default function HomeScreen() {
             recipes={recipes}
             iconColor={iconColor}
             iconName={iconName}
+            onSelect={handleRecipeSelect}
           />
 
           <TouchableOpacity

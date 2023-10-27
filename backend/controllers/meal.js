@@ -5,14 +5,17 @@ module.exports = {
   index,
   showMeal,
   deleteMeal,
+  deleteMealByEdamamId,
 };
 
 async function createMeal(req, res) {
   try {
+    console.log(req.body);
     const meal = await Meal.create(req.body);
     res.status(201).json(meal);
   } catch (error) {
-    res.status(500).json({ error: "Internal server error" });
+    console.log(error);
+    res.status(500).json({ error: "Error creating meal" });
   }
 }
 
@@ -23,7 +26,7 @@ async function index(req, res) {
     res.status(200).json(meals);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Error fetching meal list" });
   }
 }
 
@@ -44,6 +47,21 @@ async function showMeal(req, res) {
 async function deleteMeal(req, res) {
   try {
     const meal = await Meal.findByIdAndDelete(req.params.id);
+    if (!meal) {
+      return res.status(404).json({ error: "Meal not found" });
+    }
+    res.status(200).json({ message: "Meal deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting meal:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+async function deleteMealByEdamamId(req, res) {
+  try {
+    const mealByEdamamId = await Meal.findOne({ api_id: req.params.id });
+    console.log(mealByEdamamId);
+    const meal = await Meal.findByIdAndDelete(mealByEdamamId._id);
     if (!meal) {
       return res.status(404).json({ error: "Meal not found" });
     }
