@@ -27,14 +27,19 @@ import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 
 import { AppRegistry } from "react-native";
 import { useFonts } from "expo-font";
 import postUser from "./services/user";
-import {Firebase, db} from './config/firebase';
-import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
-import { collection, addDoc, getDocs } from "firebase/firestore"; 
-
+import { Firebase, db } from "./config/firebase";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,signInWithPopup, GoogleAuthProvider
+} from "firebase/auth";
+import { collection, addDoc, getDocs } from "firebase/firestore";
 
 
 // const loadFonts = async () => {
@@ -46,19 +51,20 @@ import { collection, addDoc, getDocs } from "firebase/firestore";
 // loadFonts();
 
 const auth = getAuth();
+const provider = new GoogleAuthProvider();
 
 WebBrowser.maybeCompleteAuthSession();
 
 function Navigation() {
-  const [user, setUser ] = React.useState();
+  const [user, setUser] = React.useState();
   const [isLoading, setIsLoading] = React.useState(true);
   const [userInfo, setUserInfo] = React.useState(null);
   const [formattedInfo, setFormattedInfo] = React.useState({
-    googleId: '',
-    name: '',
-    email: '',
-    avatar: '',
-  })
+    googleId: "",
+    name: "",
+    email: "",
+    avatar: "",
+  });
   const [showOnboarding, setShowOnboarding] = React.useState(true);
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId:
@@ -73,18 +79,18 @@ function Navigation() {
     handleSignInWithGoogle();
   }, [response]);
 
-  React.useEffect(()=> {
-    if(userInfo){
+  React.useEffect(() => {
+    if (userInfo) {
       setFormattedInfo({
         googleId: userInfo.id,
         name: userInfo.name,
         email: userInfo.email,
         avatar: userInfo.picture,
-      })
+      });
     }
   }, [userInfo]);
-  userInfo && postUser(formattedInfo)
-  
+  userInfo && postUser(formattedInfo);
+
   // const saveGoogleUser = async () => {
   //   if(userInfo){
   //     setFormattedInfo({
@@ -104,7 +110,7 @@ function Navigation() {
         await getUserInfo(response.authentication.accessToken);
       }
     } else {
-      setUserInfo(JSON.parse(user));     
+      setUserInfo(JSON.parse(user));
     }
   }
 
@@ -149,19 +155,21 @@ function Navigation() {
 
   React.useEffect(() => {
     // onAuthStateChanged returns an unsubscriber
-    let mount = true
+    let mount = true;
 
     onAuthStateChanged(auth, async (authenticatedUser) => {
-      if(mount) {
-        await authenticatedUser ? setUser(authenticatedUser) : setUser(null)
+      if (mount) {
+        (await authenticatedUser) ? setUser(authenticatedUser) : setUser(null);
         setIsLoading(false);
       }
     });
 
     return () => {
-      mount = false
-    }
+      mount = false;
+    };
   }, []);
+
+  console.log(user);
 
   return (
     <>
@@ -172,14 +180,12 @@ function Navigation() {
           ) : (
             <Stack.Navigator headerMode="none">
               <Stack.Screen name="TabGroup" component={TabGroup} />
-             
             </Stack.Navigator>
           )}
         </NavigationContainer>
       ) : (
         <NavigationContainer>
- 
-              {/* <TouchableOpacity
+          {/* <TouchableOpacity
                 style={styles.googleButton}
                 onPress={() => {
                   promptAsync();
@@ -191,20 +197,18 @@ function Navigation() {
                 />
                 <Text>Sign In with Google</Text>
               </TouchableOpacity> */}
-              <Stack.Navigator headerMode="none">
-              <Stack.Screen name="Login" component={Login} />
-              <Stack.Screen name="Register" component={Register} />
-            </Stack.Navigator>
-              {/* <Button
+          <Stack.Navigator headerMode="none">
+            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="Register" component={Register} />
+          </Stack.Navigator>
+          {/* <Button
                 title="Sign in with Google"
                 disabled={!request}
                 onPress={() => {
                   promptAsync();
                 }}
               /> */}
-             
         </NavigationContainer>
-       
       )}
     </>
   );
@@ -288,24 +292,45 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
 
-  inputContainer: {
-    borderRadius: 12,
-    marginBottom: 20,
-    borderWidth: 2,
-    borderColor: "#2bced6",
-  },
-
   // input: {
   //   fontSize: 24,
   //   fontFamily: "SatushiRegular",
   // },
 
   login: {
-    marginBottom: 24,
-    backgroundColor: "#2bced6",
-    color: "#fff",
-    fontSize: 20,
-    fontFamily: "SatushiBlack",
+    flexDirection: "row",
+    backgroundColor: "#BC8738",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 15,
+    paddingHorizontal: 35,
+    borderRadius: 10,
+    color: "white",
+    marginBottom: 20,
+    marginTop: 20,
+  },
+  loginText: {
+    color: "white",
+  },
+  textInput: {
+    width: 40,
+    height: 40,
+    margin: 12,
+    borderRadius: 10,
+    padding: 10,
+    width: 200,
+    backgroundColor: "#EAEAEA",
+    outlineStyle: "none",
+  },
+  inputField: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#EAEAEA",
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    marginBottom: 40,
+    boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.20)",
   },
 });
 
@@ -337,7 +362,7 @@ function TabGroup() {
         headerShown: false,
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
-          if (route.name === "Home") {
+          if (route.name === "HomeStack") {
             iconName = focused ? "home" : "home-outline";
           } else if (route.name === "Explore") {
             iconName = focused ? "compass" : "compass-outline";
@@ -376,15 +401,37 @@ function Login() {
 
   const navigation = useNavigation();
 
-  
+  const handleGoogleAuth = () => {
+    signInWithPopup(auth, provider)
+  .then((result) => {
+    // This gives you a Google Access Token. You can use it to access the Google API.
+    const credential = GoogleAuthProvider.credentialFromResult(result);
+    const token = credential.accessToken;
+    // The signed-in user info.
+    const user = result.user;
+    setUser(user)
+    // IdP data available using getAdditionalUserInfo(result)
+    // ...
+  }).catch((error) => {
+    // Handle Errors here.
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    // The email of the user's account used.
+    const email = error.customData.email;
+    // The AuthCredential type that was used.
+    const credential = GoogleAuthProvider.credentialFromError(error);
+    // ...
+  });
+  }
 
   const onLogin = async () => {
     setloading(true);
 
     // try {
     if (email !== "" && password !== "") {
-      await signInWithEmailAndPassword(auth, email, password)
-        .catch((error) => setLoginError(error.message));
+      await signInWithEmailAndPassword(auth, email, password).catch((error) =>
+        setLoginError(error.message)
+      );
     } else {
       setLoginError("please enter all the fields");
     }
@@ -397,84 +444,93 @@ function Login() {
 
   return (
     <LinearGradient
-          colors={["rgb(228, 181, 92)", "white"]}
-          style={{
-            flex: 1,
-            width: "100%",
-            paddingHorizontal: 15,
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <View style={styles.centeredContainer}>
-            <View>
-              {/* <TextInput style={styles.input} />
+      colors={["rgb(228, 181, 92)", "white"]}
+      style={{
+        flex: 1,
+        width: "100%",
+        paddingHorizontal: 15,
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <View style={styles.centeredContainer}>
+        <View>
+          {/* <TextInput style={styles.input} />
             <TextInput style={styles.input} /> */}
-              {/* <TouchableOpacity style={styles.loginButton}>
+          {/* <TouchableOpacity style={styles.loginButton}>
                 Log In
               </TouchableOpacity> */}
+          <View>
+            <Image
+              source={require("./assets/images/logo.png")}
+              style={styles.logo}
+            />
+            <Text style={styles.mainHeader}>
+              Collabor
+              <Text style={{ color: "#EAAD37" }}>Eat</Text>
+            </Text>
+          </View>
+          <View>
+            <View style={styles.inputField}>
+              <TextInput
+                style={styles.textInput}
+                placeholder="Enter your email"
+                placeholderTextColor="#6B6B6B"
+                keyboardType="email-address"
+                value={email}
+                onChangeText={(text) => setEmail(text)}
+              />
+              <MaterialIcons name="mail-outline" size={24} color="gray" />
+            </View>
+
+            <View style={styles.inputField}>
+              <TextInput
+                style={styles.textInput}
+                placeholder="Password"
+                placeholderTextColor="#6B6B6B"
+                value={password}
+                onChangeText={(text) => setPassword(text)}
+              />
+              <MaterialIcons name="lock" size={24} color="gray" />
+            </View>
+
+            {loading ? (
               <View>
-                <Image
-                  source={require("./assets/images/logo.png")}
-                  style={styles.logo}
-                />
-                <Text style={styles.mainHeader}>
-                  Collabor
-                  <Text style={{ color: "#EAAD37" }}>Eat</Text>
-                </Text>
+                <Text>Loading</Text>
               </View>
-    <View>
-      
-      <Text>
-        Login
-      </Text>
+            ) : (
+              <TouchableOpacity style={styles.login} onPress={onLogin}>
+                <Text style={styles.loginText}>Log In</Text>
+              </TouchableOpacity>
+            )}
 
-      <TextInput
-       
-        placeholder="Enter email"
-       
-        keyboardType="email-address"
-       
-       
-        value={email}
-        onChangeText={(text) => setEmail(text)}
-      />
+            <TouchableOpacity
+              style={styles.googleButton}
+              onPress={handleGoogleAuth}
+            >
+              <Image
+                source={require("./assets/images/googleIcon.png")}
+                style={{ height: 20, width: 20, left: -10, marginRight: 10 }}
+              />
+              <Text>Sign In with Google</Text>
+            </TouchableOpacity>
 
-      <TextInput
-        
-        placeholder="Enter password"
-        
-        value={password}
-        onChangeText={(text) => setPassword(text)}
-        
-      />
-      
-
-      {loading ? (
-        <View >
-          <Text>Loading</Text>
+            
+           
+          </View>
+          <Text
+            style={{ textAlign: "center", marginBottom: 20, marginTop: 20 }}
+          >
+            New User?
+          </Text>
+          
+          <TouchableOpacity onPress={() => navigation.navigate("Register")} style={styles.button}>
+            <Text>Sign Up</Text>
+          </TouchableOpacity>
         </View>
-      ) : (
-        <TouchableOpacity onPress={onLogin} ><Text>Login</Text></TouchableOpacity>
-        
-      )}
-
-      <Button
-        onPress={() => navigation.navigate("Register")}
-        title="Go to Signup"
-        color="#2bced6"
-      />
-    </View>
-     <Text
-     style={{ textAlign: "center", marginBottom: 20, marginTop: 20 }}
-   >
-     New User?
-   </Text>
-   <TouchableOpacity style={styles.button}><Text>Sign Up</Text></TouchableOpacity>
- </View>
-</View>
-</LinearGradient>
+      </View>
+    </LinearGradient>
   );
 }
 
@@ -488,39 +544,37 @@ function Register() {
 
   const navigation = useNavigation();
 
-  React.useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, "users"));
-        const users = [];
-  
-        querySnapshot.forEach((documentSnapshot) => {
-          users.push({
-            ...documentSnapshot.data(),
-            key: documentSnapshot.id,
-          });
-        });
-  
-        setUsers(users);
-        // setLoading(false);
-      } catch (error) {
-        // Handle errors here, e.g., set an error state
-        console.error("Error fetching data:", error);
-      }
-    };
-  
-    fetchData(); // Call the async function here
-  
-  }, []);
+  // React.useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const querySnapshot = await getDocs(collection(db, "users"));
+  //       const users = [];
 
- 
+  //       querySnapshot.forEach((documentSnapshot) => {
+  //         users.push({
+  //           ...documentSnapshot.data(),
+  //           key: documentSnapshot.id,
+  //         });
+  //       });
+
+  //       setUsers(users);
+  //       // setLoading(false);
+  //     } catch (error) {
+  //       // Handle errors here, e.g., set an error state
+  //       console.error("Error fetching data:", error);
+  //     }
+  //   };
+
+  //   fetchData(); // Call the async function here
+
+  // }, []);
 
   const onHandleSignup = async () => {
     try {
       setloading(true);
       if (email !== "" && password !== "" && name !== "") {
-        await createUserWithEmailAndPassword(auth, email, password)
-          .then((response) => {
+        await createUserWithEmailAndPassword(auth, email, password).then(
+          (response) => {
             const uid = response.user.uid;
             const data = {
               name: name,
@@ -529,9 +583,10 @@ function Register() {
               id: users.length + 1,
             };
 
-            const userRef =  addDoc(collection(db, "users"), data);
+            const userRef = addDoc(collection(db, "users"), data);
             // userRef.doc(uid).set(data);
-          });
+          }
+        );
       } else {
         setSignupError("Please enter all the fields");
       }
@@ -544,7 +599,6 @@ function Register() {
 
   return (
     <View>
-      
       <Text>Create new account</Text>
 
       <TextInput
@@ -560,31 +614,20 @@ function Register() {
       />
 
       <TextInput
-        
         placeholder="Enter email"
-        
         keyboardType="email-address"
-        
         value={email}
-        
-        
         onChangeText={(text) => setEmail(text)}
       />
 
       <TextInput
-        
-       
         placeholder="Enter password"
-        
         value={password}
-        
         onChangeText={(text) => setPassword(text)}
-        
       />
-      
 
       {loading ? (
-        <View >
+        <View>
           <Text>Loading</Text>
         </View>
       ) : (
