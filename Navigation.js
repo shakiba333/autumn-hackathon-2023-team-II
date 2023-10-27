@@ -62,31 +62,36 @@ function Navigation() {
   const [userInfo, setUserInfo] = React.useState(null);
   const [formattedInfo, setFormattedInfo] = React.useState(null);
   const [showOnboarding, setShowOnboarding] = React.useState(true);
-  const [request, response, promptAsync] = Google.useAuthRequest({
-    androidClientId:
-      "356560269346-l8nhb3lgrdoefj5ga4kkkslh0pstah0a.apps.googleusercontent.com",
-    iosClientId:
-      "356560269346-aj6o16ra0ace2gat2o1hqrp9dnlbit5c.apps.googleusercontent.com",
-    webClientId:
-      "356560269346-8m1hnjk7mpb9cfgg7ip0c83g0jb3ni0c.apps.googleusercontent.com",
-  });
+  // const [request, response, promptAsync] = Google.useAuthRequest({
+  //   androidClientId:
+  //     "356560269346-l8nhb3lgrdoefj5ga4kkkslh0pstah0a.apps.googleusercontent.com",
+  //   iosClientId:
+  //     "356560269346-aj6o16ra0ace2gat2o1hqrp9dnlbit5c.apps.googleusercontent.com",
+  //   webClientId:
+  //     "356560269346-8m1hnjk7mpb9cfgg7ip0c83g0jb3ni0c.apps.googleusercontent.com",
+  // });
+
+  console.log(user?.uid)
+
+  // React.useEffect(() => {
+  //   handleSignInWithGoogle();
+  // }, [response]);
 
   React.useEffect(() => {
-    handleSignInWithGoogle();
-  }, [response]);
-
-  React.useEffect(() => {
-    if (userInfo) {
+    if (user) {
       setFormattedInfo({
-        googleId: userInfo.id,
-        name: userInfo.name,
-        email: userInfo.email,
-        avatar: userInfo.picture,
+        googleId: user.uid,
+        name: user.displayName,
+        email: user.email,
+        avatar: user.photoURL,
       });
     }
-  }, [userInfo]);
+    postUser(formattedInfo)
+  }, [user]);
 
-  userInfo && formattedInfo && postUser(formattedInfo);
+  console.log(formattedInfo)
+
+  // user && formattedInfo && postUser(formattedInfo);
 
   async function handleSignInWithGoogle() {
     const user = await AsyncStorage.getItem("@user");
@@ -386,10 +391,11 @@ function Login() {
 
   const navigation = useNavigation();
 
-  const handleGoogleAuth = () => {
+  const handleGoogleAuth =  () => {
     signInWithPopup(auth, provider)
       .then((result) => {
         // This gives you a Google Access Token. You can use it to access the Google API.
+        
         const credential = GoogleAuthProvider.credentialFromResult(result);
         const token = credential.accessToken;
         // The signed-in user info.
