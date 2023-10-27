@@ -44,3 +44,22 @@ export async function deleteMealByEdamamId(edamamId) {
     return null;
   }
 }
+
+export async function findMealByEdamamId(edamamId) {
+  try {
+    const response = await axios.get(`${backend_url}/edamam/${edamamId}`, {
+      headers: { "Content-Type": "application/json" },
+    });
+
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      // The request was made, but the server responded with an error status code
+      console.error("Server responded with status:", error.response.status);
+      console.error("Response data:", error.response.data);
+    } else {
+      console.error(error);
+    }
+    return null;
+  }
+}
