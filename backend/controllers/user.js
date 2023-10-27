@@ -4,16 +4,17 @@ const Group = require("../models/group");
 
 module.exports = {
   create,
-  login,
+  // login,
 };
 
 async function create(req, res) {
   try {
-    console.log(req.body);
+    console.log(req.body)
     const user = await User.findOne({ googleId: req.body.googleId });
 
     if (user) {
-      res.status(500).json({ error: "Email already in use." });
+      res.status(200).json(user);
+      return;
     }
 
     const newGroup = await Group.create(req.body);
@@ -36,14 +37,14 @@ async function create(req, res) {
   }
 }
 
-async function login(req, res) {
-  try {
-    const user = await User.findOne({ googleId: req.body.id });
+// async function login(req, res) {
+//   try {
+//     const user = await User.findOne({ googleId: req.body.googleId });
 
-    if (!user) throw new Error();
+//     if (!user) throw new Error();
 
-    res.json(user);
-  } catch (err) {
-    res.status(400).json("Unable to login");
-  }
-}
+//     res.json(user);
+//   } catch (err) {
+//     res.status(400).json("Unable to login");
+//   }
+// }

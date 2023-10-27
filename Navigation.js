@@ -29,6 +29,7 @@ import { Ionicons } from "@expo/vector-icons";
 
 import { AppRegistry } from "react-native";
 import { useFonts } from "expo-font";
+import postUser from "./services/user";
 
 // const loadFonts = async () => {
 //   await useFonts({
@@ -42,6 +43,12 @@ WebBrowser.maybeCompleteAuthSession();
 
 function Navigation() {
   const [userInfo, setUserInfo] = React.useState(null);
+  const [formattedInfo, setFormattedInfo] = React.useState({
+    googleId: '',
+    name: '',
+    email: '',
+    avatar: '',
+  })
   const [showOnboarding, setShowOnboarding] = React.useState(true);
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId:
@@ -56,6 +63,30 @@ function Navigation() {
     handleSignInWithGoogle();
   }, [response]);
 
+  React.useEffect(()=> {
+    if(userInfo){
+      setFormattedInfo({
+        googleId: userInfo.id,
+        name: userInfo.name,
+        email: userInfo.email,
+        avatar: userInfo.picture,
+      })
+    }
+  }, [userInfo]);
+  userInfo && postUser(formattedInfo)
+  
+  // const saveGoogleUser = async () => {
+  //   if(userInfo){
+  //     setFormattedInfo({
+  //       googleId: userInfo.id,
+  //       name: userInfo.name,
+  //       email: userInfo.email,
+  //       avatar: userInfo.picture,
+  //     })
+  //     postUser(formattedInfo)
+  //   }
+  // }
+
   async function handleSignInWithGoogle() {
     const user = await AsyncStorage.getItem("@user");
     if (!user) {
@@ -63,7 +94,7 @@ function Navigation() {
         await getUserInfo(response.authentication.accessToken);
       }
     } else {
-      setUserInfo(JSON.parse(user));
+      setUserInfo(JSON.parse(user));     
     }
   }
 

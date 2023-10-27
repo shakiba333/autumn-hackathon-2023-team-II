@@ -6,8 +6,11 @@ import { LinearGradient } from 'expo-linear-gradient';
 import axios from 'axios';
 import RecipeList from '../../components/RecipeList';
 import { useNavigation } from '@react-navigation/native';
+import { REACT_APP_API } from '@env';
 
 export default function HomeScreen() {
+  console.log("dotenv " + process.env.REACT_APP_API)
+
   const [isLoading, setIsLoading] = useState(true);
   const [recipes, setRecipes] = useState([]);
   const foodItems = ['chicken', 'pasta', 'salad', 'sushi', 'pizza', 'burger', 'soup', 'taco', 'sandwich', 'steak'];
@@ -50,9 +53,9 @@ export default function HomeScreen() {
           style={styles.gradient}
         >
           <Image source={require('../../assets/meal-logo.png')} style={styles.logo} />
-          <Text style={styles.headerText}>Welcome!</Text>
+          <Text style={styles.headerText}>Welcome! {process.env.REACT_APP_API}</Text>
           <RecipeList recipes={recipes} />
-          
+
           <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Cravings')}>
             <Text style={styles.buttonText}>Let's CollaborEat</Text>
             <Ionicons name="arrow-forward" size={24} color="white" />

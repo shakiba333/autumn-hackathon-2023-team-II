@@ -10,6 +10,9 @@ require("./backend/config/database");
 
 const app = express();
 
+// Enable CORS for your frontend origin
+app.use(cors({ origin: 'https://localhost:19006' }));
+
 app.use(logger("dev"));
 app.use(express.json());
 
