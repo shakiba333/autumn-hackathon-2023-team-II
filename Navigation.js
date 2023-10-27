@@ -30,7 +30,7 @@ import { Ionicons } from "@expo/vector-icons";
 
 import { AppRegistry } from "react-native";
 import { useFonts } from "expo-font";
-import postUser from "./services/user";
+import { postUser } from "./services/user";
 
 // const loadFonts = async () => {
 //   await useFonts({

@@ -4,12 +4,11 @@ const Group = require("../models/group");
 
 module.exports = {
   create,
-  // login,
+  show
 };
 
 async function create(req, res) {
   try {
-    console.log(req.body);
     const user = await User.findOne({ googleId: req.body.googleId });
 
     if (user) {
@@ -28,7 +27,6 @@ async function create(req, res) {
       name: req.body.name,
       email: req.body.email,
       avatar: req.body.picture,
-      profile: req.body.profile,
     });
 
     res.status(200).json(newUser);
@@ -37,14 +35,13 @@ async function create(req, res) {
   }
 }
 
-// async function login(req, res) {
-//   try {
-//     const user = await User.findOne({ googleId: req.body.googleId });
+async function show(req, res) {
+  const userEmail = req.params.email
+  const user = await User.findOne({ email: userEmail })
+          .populate({
+              path: 'profile',
+              populate: { path: 'groups', model: 'Group'}
+          })
+  res.json(user);
+}
 
-//     if (!user) throw new Error();
-
-//     res.json(user);
-//   } catch (err) {
-//     res.status(400).json("Unable to login");
-//   }
-// }
