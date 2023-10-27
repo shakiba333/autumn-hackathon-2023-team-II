@@ -17,6 +17,8 @@ import { useNavigation } from "@react-navigation/native";
 import { REACT_APP_API } from "@env";
 import LoadingDots from "react-native-loading-dots";
 import { postMeal, deleteMealByEdamamId } from "../../services/meal";
+import { getUser } from "../../services/user";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function HomeScreen() {
   console.log("dotenv " + process.env.REACT_APP_EDAMAM_APPLICATION_ID);
@@ -59,6 +61,25 @@ export default function HomeScreen() {
 
   const iconName = "more-horiz";
   const iconColor = "red";
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUserToken = async () => {
+      try {
+        const token = await AsyncStorage.getItem('@user');
+        if (token) {
+          const googleInfo = JSON.parse(token);
+          setUser(googleInfo)
+          const user = await getUser(googleInfo.email)
+          setUser(user)
+        }
+      } catch (error) {
+        console.error('Error fetching user token:', error);
+      }
+    };
+
+    fetchUserToken();
+  }, []);
 
   useEffect(() => {
     const edamamApiUrl = `https://api.edamam.com/api/recipes/v2?type=public&q=${randomFood}&app_id=41abb1f4&app_key=375f32061b6e7ab61e5b1808f4469c1e`;
