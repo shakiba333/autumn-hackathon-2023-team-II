@@ -4,19 +4,30 @@ const Schema = mongoose.Schema;
 const mealSchema = new Schema(
   {
     api_id: {
-      type: Number,
-      required: true,
-    },
-    name: {
       type: String,
       required: true,
     },
-    description: {
+    uri: {
+      type: String,
+    },
+    label: {
+      type: String,
+      required: true,
+    },
+    cuisineType: {
+      type: [String],
+    },
+    numberOfIngredients: {
+      type: Number,
+    },
+    totalTime: {
+      type: Number,
+    },
+    shareAs: {
       type: String,
     },
     date: {
       type: Date,
-      required: true,
     },
     time: {
       type: String,
