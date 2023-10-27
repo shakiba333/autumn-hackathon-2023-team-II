@@ -15,7 +15,7 @@ function Suggestions() {
   randomNumber = randomNumber < 4 ? 4 : randomNumber;
   // const navigation = useNavigation();
   const iconName = 'add-circle'
-  const iconColor = ''
+ console.log(recipes)
   const [selectedRecipes, setSelectedRecipes] = useState([])
 
   useEffect(() => {
@@ -37,7 +37,8 @@ function Suggestions() {
   }, []);
 
   const handleRecipeSelect = (recipe) => {
-    const index = selectedRecipes.findIndex((selectedRecipe) => selectedRecipe.uri === recipe.uri);
+    const index = selectedRecipes.findIndex((selectedRecipe) => selectedRecipe.recipe.uri === recipe.recipe.uri);
+    console.log(index)
     if (index === -1) {
       setSelectedRecipes([...selectedRecipes, recipe]);
     } else {
@@ -61,7 +62,7 @@ function Suggestions() {
   return (
     <View style={styles.container}>
       <Text style={styles.headerText}>Meal Suggestions</Text>
-      <RecipeList recipes={recipes} iconColor={iconColor} iconName={iconName} onSelect={handleRecipeSelect} />
+      <RecipeList recipes={recipes}  iconName={iconName} onSelect={handleRecipeSelect} selectedRecipes={selectedRecipes} />
        <TouchableOpacity style={styles.button}>
             <Text style={styles.buttonText}>Save</Text>
             <Ionicons name="arrow-forward" size={24} color="white" />

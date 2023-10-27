@@ -2,7 +2,9 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 
-const RecipeList = ({ recipes, iconName, iconColor, onSelect }) => {
+const RecipeList = ({ recipes, iconName, iconColor, onSelect, selectedRecipes }) => {
+  const selectedIconColor = 'green'; // Color for selected recipes
+const unselectedIconColor = 'gray';
   
   return (
     <View style={styles.recipeListContainer}>
@@ -13,7 +15,7 @@ const RecipeList = ({ recipes, iconName, iconColor, onSelect }) => {
               <Text style={styles.recipeCuisineName}>{recipe.recipe.cuisineType}</Text>
             </View>
             <TouchableOpacity style={styles.recipeCuisineRight} onPress={()=>onSelect(recipe)}>
-                <MaterialIcons name={iconName} size={16} color={iconColor} />
+                <MaterialIcons name={iconName} size={16} color={selectedRecipes?.includes(recipe) ? selectedIconColor : unselectedIconColor} />
             </TouchableOpacity>
           </View>
           <View style={styles.recipeDetails}>
