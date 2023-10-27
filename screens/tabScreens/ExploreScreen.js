@@ -3,7 +3,7 @@ import { View } from 'react-native'
 
 const ExploreScreen = () => {
   return (
-    <View>ExploreScreen</View>
+    <View><Text>ExploreScreen</Text></View>
   )
 }
 

@@ -3,7 +3,7 @@ import { View } from 'react-native'
 
 const FavouriteScreen = () => {
   return (
-    <View>FavouriteScreen</View>
+    <View><Text>FavouriteScreen</Text></View>
   )
 }
 
