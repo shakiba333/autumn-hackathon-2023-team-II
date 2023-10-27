@@ -44,12 +44,7 @@ WebBrowser.maybeCompleteAuthSession();
 
 function Navigation() {
   const [userInfo, setUserInfo] = React.useState(null);
-  const [formattedInfo, setFormattedInfo] = React.useState({
-    googleId: '',
-    name: '',
-    email: '',
-    avatar: '',
-  })
+  const [formattedInfo, setFormattedInfo] = React.useState(null);
   const [showOnboarding, setShowOnboarding] = React.useState(true);
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId:
@@ -64,29 +59,18 @@ function Navigation() {
     handleSignInWithGoogle();
   }, [response]);
 
-  React.useEffect(()=> {
-    if(userInfo){
+  React.useEffect(() => {
+    if (userInfo) {
       setFormattedInfo({
         googleId: userInfo.id,
         name: userInfo.name,
         email: userInfo.email,
         avatar: userInfo.picture,
-      })
+      });
     }
   }, [userInfo]);
-  userInfo && postUser(formattedInfo)
-  
-  // const saveGoogleUser = async () => {
-  //   if(userInfo){
-  //     setFormattedInfo({
-  //       googleId: userInfo.id,
-  //       name: userInfo.name,
-  //       email: userInfo.email,
-  //       avatar: userInfo.picture,
-  //     })
-  //     postUser(formattedInfo)
-  //   }
-  // }
+
+  userInfo && formattedInfo && postUser(formattedInfo);
 
   async function handleSignInWithGoogle() {
     const user = await AsyncStorage.getItem("@user");
@@ -95,7 +79,7 @@ function Navigation() {
         await getUserInfo(response.authentication.accessToken);
       }
     } else {
-      setUserInfo(JSON.parse(user));     
+      setUserInfo(JSON.parse(user));
     }
   }
 
@@ -190,19 +174,12 @@ function Navigation() {
                 />
                 Sign In with Google
               </TouchableOpacity>
-              {/* <Button
-                title="Sign in with Google"
-                disabled={!request}
-                onPress={() => {
-                  promptAsync();
-                }}
-              /> */}
-              <Text
+              {/* <Text
                 style={{ textAlign: "center", marginBottom: 20, marginTop: 20 }}
               >
                 New User?
               </Text>
-              <TouchableOpacity style={styles.button}>Sign Up</TouchableOpacity>
+              <TouchableOpacity style={styles.button}>Sign Up</TouchableOpacity> */}
             </View>
           </View>
         </LinearGradient>
