@@ -37,10 +37,11 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
   onAuthStateChanged,
-  signInWithEmailAndPassword,signInWithPopup, GoogleAuthProvider
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
 } from "firebase/auth";
 import { collection, addDoc, getDocs } from "firebase/firestore";
-
 
 // const loadFonts = async () => {
 //   await useFonts({
@@ -74,14 +75,14 @@ function Navigation() {
     handleSignInWithGoogle();
   }, [response]);
 
-  React.useEffect(()  => {
-    if  (userInfo)  {
+  React.useEffect(() => {
+    if (userInfo) {
       setFormattedInfo({
         googleId: userInfo.id,
         name: userInfo.name,
         email: userInfo.email,
         avatar: userInfo.picture,
-      });;
+      });
     }
   }, [userInfo]);
 
@@ -387,26 +388,27 @@ function Login() {
 
   const handleGoogleAuth = () => {
     signInWithPopup(auth, provider)
-  .then((result) => {
-    // This gives you a Google Access Token. You can use it to access the Google API.
-    const credential = GoogleAuthProvider.credentialFromResult(result);
-    const token = credential.accessToken;
-    // The signed-in user info.
-    const user = result.user;
-    setUser(user)
-    // IdP data available using getAdditionalUserInfo(result)
-    // ...
-  }).catch((error) => {
-    // Handle Errors here.
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    // The email of the user's account used.
-    const email = error.customData.email;
-    // The AuthCredential type that was used.
-    const credential = GoogleAuthProvider.credentialFromError(error);
-    // ...
-  });
-  }
+      .then((result) => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        // The signed-in user info.
+        const user = result.user;
+        setUser(user);
+        // IdP data available using getAdditionalUserInfo(result)
+        // ...
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // The email of the user's account used.
+        const email = error.customData.email;
+        // The AuthCredential type that was used.
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        // ...
+      });
+  };
 
   const onLogin = async () => {
     setloading(true);
@@ -450,7 +452,6 @@ function Login() {
               source={require("./assets/meal-logo.png")}
               style={styles.logo}
             />
-            
           </View>
           <View>
             <View style={styles.inputField}>
@@ -496,17 +497,17 @@ function Login() {
               />
               <Text>Sign In with Google</Text>
             </TouchableOpacity>
-
-            
-           
           </View>
           <Text
             style={{ textAlign: "center", marginBottom: 20, marginTop: 20 }}
           >
             New User?
           </Text>
-          
-          <TouchableOpacity onPress={() => navigation.navigate("Register")} style={styles.button}>
+
+          <TouchableOpacity
+            onPress={() => navigation.navigate("Register")}
+            style={styles.button}
+          >
             <Text>Sign Up</Text>
           </TouchableOpacity>
         </View>
@@ -524,6 +525,30 @@ function Register() {
   const [loading, setloading] = React.useState(false);
 
   const navigation = useNavigation();
+
+  const handleGoogleAuth = () => {
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        // The signed-in user info.
+        const user = result.user;
+        setUser(user);
+        // IdP data available using getAdditionalUserInfo(result)
+        // ...
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // The email of the user's account used.
+        const email = error.customData.email;
+        // The AuthCredential type that was used.
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        // ...
+      });
+  };
 
   // React.useEffect(() => {
   //   const fetchData = async () => {
@@ -579,56 +604,88 @@ function Register() {
   };
 
   return (
-    <View>
-      <Text>Create new account</Text>
-
-      <TextInput
-        inputStyle={styles.input}
-        containerStyle={styles.inputContainer}
-        leftIcon="account"
-        testID="fullName"
-        placeholder="Enter Fullname"
-        autoCapitalize="words"
-        value={name}
-        placeholderTextColor="slategray"
-        onChangeText={(text) => setName(text)}
-      />
-
-      <TextInput
-        placeholder="Enter email"
-        keyboardType="email-address"
-        value={email}
-        onChangeText={(text) => setEmail(text)}
-      />
-
-      <TextInput
-        placeholder="Enter password"
-        value={password}
-        onChangeText={(text) => setPassword(text)}
-      />
-
-      {loading ? (
+    <LinearGradient
+      colors={["rgb(228, 181, 92)", "white"]}
+      style={{
+        flex: 1,
+        width: "100%",
+        paddingHorizontal: 15,
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <View style={styles.centeredContainer}>
         <View>
-          <Text>Loading</Text>
+          <Image
+            source={require("./assets/meal-logo.png")}
+            style={styles.logo}
+          />
         </View>
-      ) : (
-        <Button
-          onPress={onHandleSignup}
-          backgroundColor="#2bced6"
-          title="Signup"
-          tileColor="#fff"
-          titleSize={20}
-          containerStyle={{
-            marginBottom: 24,
-          }}
-        />
-      )}
+        <Text style={styles.mainHeader}>Create new account</Text>
+        <View style={styles.inputField}>
+          <TextInput
+           style={styles.textInput}
+            inputStyle={styles.inputField}
+            placeholder="Enter Fullname"
+            autoCapitalize="words"
+            value={name}
+            placeholderTextColor="#6B6B6B"
+            onChangeText={(text) => setName(text)}
+          />
+          <MaterialIcons name="mail-outline" size={24} color="gray" />
+        </View>
 
-      <Button
-        onPress={() => navigation.navigate("Login")}
-        title="Go to Login"
-        color="#2bced6"
-      />
-    </View>
+        <View style={styles.inputField}>
+          <TextInput
+           style={styles.textInput}
+            placeholder="Enter email"
+            keyboardType="email-address"
+            value={email}
+            onChangeText={(text) => setEmail(text)}
+          />
+          <MaterialIcons name="mail-outline" size={24} color="gray" />
+        </View>
+
+        <View style={styles.inputField}>
+          <TextInput
+           style={styles.textInput}
+            placeholder="Enter password"
+            value={password}
+            onChangeText={(text) => setPassword(text)}
+          />
+          <MaterialIcons name="mail-outline" size={24} color="gray" />
+        </View>
+
+        {loading ? (
+          <View>
+            <Text>Loading</Text>
+          </View>
+        ) : (
+          <TouchableOpacity style={styles.login} onPress={onHandleSignup}>
+            <Text style={styles.loginText}>Sign Up</Text>
+          </TouchableOpacity>
+        )}
+        <View><Text>OR</Text></View>
+
+        <TouchableOpacity
+              style={styles.googleButton}
+              onPress={handleGoogleAuth}
+            >
+              <Image
+                source={require("./assets/images/googleIcon.png")}
+                style={{ height: 20, width: 20, left: -10, marginRight: 10 }}
+              />
+              <Text>Sign In with Google</Text>
+            </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => navigation.navigate("Login")}
+         
+        >
+          <Text>Have an account already? Login</Text>
+        </TouchableOpacity>
+      </View>
+    </LinearGradient>
   );
 }
