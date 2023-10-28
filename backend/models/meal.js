@@ -26,10 +26,7 @@ const mealSchema = new Schema(
     shareAs: {
       type: String,
     },
-    date: {
-      type: Date,
-    },
-    time: {
+    image: {
       type: String,
     },
   },

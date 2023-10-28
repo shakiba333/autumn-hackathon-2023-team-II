@@ -56,8 +56,7 @@ export default function HomeScreen() {
     numberOfIngredients: 0,
     totalTime: 0,
     shareAs: "",
-    date: "",
-    time: "",
+    image: "",
   });
   const [deleteMeal, setDeleteMeal] = useState();
 
@@ -146,8 +145,7 @@ export default function HomeScreen() {
           numberOfIngredients: recipe.recipe.ingredients.length,
           totalTime: recipe.recipe.totalTime,
           shareAs: recipe.recipe.shareAs,
-          date: "",
-          time: "",
+          image: recipe.recipe.image,
         };
       });
       setShouldPostMeal(true);
