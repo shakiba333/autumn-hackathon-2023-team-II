@@ -77,7 +77,7 @@ function Navigation() {
   //   handleSignInWithGoogle();
   // }, [response]);
 
-  console.log(response)
+  
 
   React.useEffect(() => {
     if (user) {
