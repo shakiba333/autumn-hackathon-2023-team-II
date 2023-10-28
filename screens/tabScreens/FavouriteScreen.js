@@ -43,8 +43,8 @@ const FavouriteScreen = () => {
             <Text>So empty ...</Text>
           ) : (
             recipes.map((recipe, index) => (
-              // <View style={[styles.recipeItem, { backgroundImage: `url(${recipe.image})` }]} key={index} >
-              <View style={styles.recipeItem} key={index} >
+              <View style={[styles.recipeItem, { backgroundImage: `url(${recipe.image})` }]} key={index} >
+              {/* <View style={styles.recipeItem} key={index} > */}
                 <View style={styles.recipeCuisine}>
                   <View style={styles.recipeCuisineLeft}>
                     <Text style={styles.recipeCuisineName}>{recipe.cuisineType}</Text>
