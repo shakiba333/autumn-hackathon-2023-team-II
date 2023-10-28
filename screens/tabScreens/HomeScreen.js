@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  Pressable,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -21,6 +22,7 @@ import { getUser } from "../../services/user";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { findMealByEdamamId } from "../../services/meal";
 import { updateGroupMeals } from "../../services/group";
+import { getAuth, signOut } from "firebase/auth";
 
 export default function HomeScreen() {
   console.log("dotenv " + process.env.REACT_APP_EDAMAM_APPLICATION_ID);
@@ -81,6 +83,8 @@ export default function HomeScreen() {
 
     fetchUserToken();
   }, []);
+
+  const auth = getAuth();
 
   useEffect(() => {
     const edamamApiUrl = `https://api.edamam.com/api/recipes/v2?type=public&q=${randomFood}&app_id=41abb1f4&app_key=375f32061b6e7ab61e5b1808f4469c1e`;
@@ -161,6 +165,14 @@ export default function HomeScreen() {
   };
   console.log(selectedRecipes);
 
+  const handleSignOut = () => {
+    signOut(auth).then(() => {
+      // Sign-out successful.
+    }).catch((error) => {
+      // An error happened.
+    });
+  }
+
   if (isLoading) {
     return (
       <SafeAreaView style={styles.loadingContainer}>
@@ -182,6 +194,7 @@ export default function HomeScreen() {
           colors={["#EAAD37", "rgba(255, 255, 255, 0.00)"]}
           style={styles.gradient}
         >
+          
           <Image
             source={require("../../assets/meal-logo.png")}
             style={styles.logo}

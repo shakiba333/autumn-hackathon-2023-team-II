@@ -5,6 +5,8 @@ import axios from "axios";
 //Grab Backend Endpoint from Env Variables
 const backend_url = "http://localhost:3000/api/users";
 
+
+
 export async function postUser(user) {
   try {
     const response = await axios.post(backend_url, user, {
@@ -12,6 +14,7 @@ export async function postUser(user) {
     });
 
     const data = response.data;
+    console.log(data)
     return data;
   } catch (error) {
     if (error.response) {

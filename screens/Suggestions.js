@@ -4,6 +4,9 @@ import RecipeList from "../components/RecipeList";
 import axios from "axios";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+
+
+
 import LoadingScreen from "./LoadingScreen";
 import { postMeal, deleteMealByEdamamId } from "../services/meal";
 

@@ -8,6 +8,7 @@ module.exports = {
 };
 
 async function create(req, res) {
+  console.log('create a user')
   try {
     const user = await User.findOne({ googleId: req.body.googleId });
 
@@ -21,6 +22,8 @@ async function create(req, res) {
 
     const newProfile = await Profile.create(req.body);
     req.body.profile = newProfile._id;
+
+   
 
     let newUser = await User.create({
       googleId: req.body.googleId,

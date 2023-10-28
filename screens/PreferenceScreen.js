@@ -22,40 +22,43 @@ function PreferencesScreen({ onComplete }) {
 
 
   const toggleSelection = (label, step) => {
-  
     switch (step) {
       case 1:
         if (selectedDietLabels.includes(label)) {
-            setSelectedDietLabels((prev) => prev.filter((item) => item !== label));
-          } else {
-            setSelectedDietLabels((prev) => [...prev, label]);
-          }
+          setSelectedDietLabels((prev) =>
+            prev.filter((item) => item !== label)
+          );
+        } else {
+          setSelectedDietLabels((prev) => [...prev, label]);
+        }
         break;
       case 2:
         if (selectedHealthLabels.includes(label)) {
-            setSelectedHealthLabels((prev) => prev.filter((item) => item !== label));
-          } else {
-            setSelectedHealthLabels((prev) => [...prev, label]);
-          }
+          setSelectedHealthLabels((prev) =>
+            prev.filter((item) => item !== label)
+          );
+        } else {
+          setSelectedHealthLabels((prev) => [...prev, label]);
+        }
         break;
       case 3:
         if (selectedCuisines.includes(label)) {
-            setSelectedCuisines((prev) => prev.filter((item) => item !== label));
-          } else {
-            setSelectedCuisines((prev) => [...prev, label]);
-          }
+          setSelectedCuisines((prev) => prev.filter((item) => item !== label));
+        } else {
+          setSelectedCuisines((prev) => [...prev, label]);
+        }
         break;
       case 4:
         if (selectedDishTypes.includes(label)) {
-            setSelectedDishTypes((prev) => prev.filter((item) => item !== label));
-          } else {
-            setSelectedDishTypes((prev) => [...prev, label]);
-          }
+          setSelectedDishTypes((prev) => prev.filter((item) => item !== label));
+        } else {
+          setSelectedDishTypes((prev) => [...prev, label]);
+        }
         break;
       default:
         return;
     }
-} 
+  };
 
 const handleFinishSelections = async () => {
 
@@ -67,8 +70,10 @@ const handleFinishSelections = async () => {
     }
     try {
       const token = await AsyncStorage.getItem('@user');
+      console.log(token)
       if (token) {
           const googleInfo = JSON.parse(token);
+          console.log(googleInfo.email)
           const userToken = await getUser(googleInfo.email)
           console.log(userToken)
           await updateProfilePreferences(userToken.profile?._id, preferences)
@@ -193,10 +198,10 @@ const handleFinishSelections = async () => {
 const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
-    alignItems: 'center',
-    backgroundColor: '#FFF',
+    alignItems: "center",
+    backgroundColor: "#FFF",
     gap: 30,
-    paddingTop: 20
+    paddingTop: 20,
   },
   container: {
     flex: 1,
@@ -204,63 +209,63 @@ const styles = StyleSheet.create({
   sectionHeader: {
     fontSize: 18,
     fontWeight: "700",
-    color: '#8ABB00',
+    color: "#8ABB00",
   },
   labelHeader: {
     fontSize: 18,
     fontWeight: "700",
-    color: '#424242',
-    fontFamily: 'Poppins'
+    color: "#424242",
+    fontFamily: "Poppins",
   },
   option: {
     flexDirection: "row",
     alignItems: "center",
-    width: 250, 
-    justifyContent: "space-between", 
+    width: 250,
+    justifyContent: "space-between",
   },
-  
+
   selectedOption: {
     backgroundColor: "lightblue",
   },
   optionText: {
     fontSize: 18,
-    fontFamily: 'Poppins',
-    fontWeight: '500',
-    color: '#000'
+    fontFamily: "Poppins",
+    fontWeight: "500",
+    color: "#000",
   },
   nextButton: {
-    flexDirection: 'row',
-    backgroundColor: 'rgb(149, 184, 57)',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    backgroundColor: "rgb(149, 184, 57)",
+    alignItems: "center",
+    justifyContent: "center",
     padding: 15,
     paddingHorizontal: 35,
     borderRadius: 10,
-    maxWidth: 'max-content',
-    marginVertical: 20
+    maxWidth: "max-content",
+    marginVertical: 20,
   },
   nextButtonText: {
-    color: 'white',
+    color: "white",
     fontSize: 18,
     marginRight: 10,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   finishButton: {
-    flexDirection: 'row',
-    backgroundColor: 'rgb(149, 184, 57)',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    backgroundColor: "rgb(149, 184, 57)",
+    alignItems: "center",
+    justifyContent: "center",
     padding: 15,
     paddingHorizontal: 35,
     borderRadius: 10,
-    maxWidth: 'max-content',
-    marginVertical: 20
+    maxWidth: "max-content",
+    marginVertical: 20,
   },
   finishButtonText: {
-    color: 'white',
+    color: "white",
     fontSize: 18,
     marginRight: 10,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 });
 

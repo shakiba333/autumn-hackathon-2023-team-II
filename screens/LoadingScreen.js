@@ -1,18 +1,18 @@
-import React from 'react';
-import { SafeAreaView, Image, StyleSheet, Text, View } from 'react-native'; 
+import React from "react";
+import { SafeAreaView, Image, StyleSheet, Text, View } from "react-native";
 import LoadingDots from "react-native-loading-dots";
 
 const LoadingScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
-        <Image source={require('../assets/meal-logo.png')} style={styles.logo} />
-        <View style={styles.dotsWrapper}>
-            <LoadingDots colors={['#FFF', '#FFF', '#FFF', '#FFF']}  size={10}/>
-        </View>
-        <Text style={styles.text}>Cooking up your results...</Text>
+      <Image source={require("../assets/meal-logo.png")} style={styles.logo} />
+      <View style={styles.dotsWrapper}>
+        <LoadingDots colors={["#FFF", "#FFF", "#FFF", "#FFF"]} size={10} />
+      </View>
+      <Text style={styles.text}>Cooking up your results...</Text>
     </SafeAreaView>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
     container: {
