@@ -19,7 +19,9 @@ import { REACT_APP_API } from "@env";
 import LoadingDots from "react-native-loading-dots";
 import { postMeal, deleteMealByEdamamId } from "../../services/meal";
 import { getUser } from "../../services/user";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { findMealByEdamamId } from "../../services/meal";
+import { updateGroupMeals } from "../../services/group";
 import { getAuth, signOut } from "firebase/auth";
 
 export default function HomeScreen() {
@@ -56,8 +58,7 @@ export default function HomeScreen() {
     numberOfIngredients: 0,
     totalTime: 0,
     shareAs: "",
-    date: "",
-    time: "",
+    image: "",
   });
   const [deleteMeal, setDeleteMeal] = useState();
 
@@ -68,15 +69,15 @@ export default function HomeScreen() {
   useEffect(() => {
     const fetchUserToken = async () => {
       try {
-        const token = await AsyncStorage.getItem('@user');
+        const token = await AsyncStorage.getItem("@user");
         if (token) {
           const googleInfo = JSON.parse(token);
-          setUser(googleInfo)
-          const user = await getUser(googleInfo.email)
-          setUser(user)
+          setUser(googleInfo);
+          const user = await getUser(googleInfo.email);
+          setUser(user);
         }
       } catch (error) {
-        console.error('Error fetching user token:', error);
+        console.error("Error fetching user token:", error);
       }
     };
 
@@ -106,14 +107,31 @@ export default function HomeScreen() {
   useEffect(() => {
     if (shouldPostMeal) {
       postMeal(saveFormattedMeal);
+      handleUpdateGroup(saveFormattedMeal.api_id);
     }
   }, [saveFormattedMeal, shouldPostMeal]);
 
   useEffect(() => {
-    if (shouldDeleteMeal) {
-      deleteMealByEdamamId(deleteMeal);
-    }
+    const deleteAndHandleUpdate = async () => {
+      if (shouldDeleteMeal) {
+        await handleUpdateGroup(deleteMeal);
+        await deleteMealByEdamamId(deleteMeal);
+      }
+    };
+
+    deleteAndHandleUpdate();
   }, [deleteMeal, shouldDeleteMeal]);
+
+  const handleUpdateGroup = async (edamamId) => {
+    const token = await AsyncStorage.getItem("@user");
+    if (token) {
+      const googleInfo = JSON.parse(token);
+      const userToken = await getUser(googleInfo.email);
+      const personalGroupId = userToken.profile.groups[0]._id;
+      const meal = await findMealByEdamamId(edamamId);
+      await updateGroupMeals(personalGroupId, meal?._id);
+    }
+  };
 
   const handleRecipeSelect = (recipe) => {
     const index = selectedRecipes.findIndex(
@@ -131,8 +149,7 @@ export default function HomeScreen() {
           numberOfIngredients: recipe.recipe.ingredients.length,
           totalTime: recipe.recipe.totalTime,
           shareAs: recipe.recipe.shareAs,
-          date: "",
-          time: "",
+          image: recipe.recipe.image,
         };
       });
       setShouldPostMeal(true);

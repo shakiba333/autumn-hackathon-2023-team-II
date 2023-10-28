@@ -8,8 +8,6 @@ const backend_url = "http://localhost:3000/api/users";
 
 
 export async function postUser(user) {
-  console.log("post function");
-  console.log(user);
   try {
     const response = await axios.post(backend_url, user, {
       headers: { "Content-Type": "application/json" },
@@ -36,7 +34,7 @@ export async function getUser(email) {
     const response = await axios.get(`${backend_url}/${email}`, {
       headers: { "Content-Type": "application/json" },
     });
-    
+
     return response.data;
   } catch (error) {
     if (error.response) {
