@@ -1,4 +1,5 @@
 const Group = require("../models/group");
+const Meal = require("../models/meal");
 
 module.exports = {
   createGroup,
@@ -7,7 +8,8 @@ module.exports = {
   updateGroup,
   updateGroupMeals,
   deleteGroup,
-  showFavorites
+  showFavorites,
+  deleteFavorite
 };
 
 async function createGroup(req, res) {
@@ -107,6 +109,24 @@ async function showFavorites(req, res) {
     const userFavorites = await Group.findById(req.params.id).populate("meals");
     // console.log(userFavorites.meals)
     res.json(userFavorites.meals);
+  } catch (error){
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+async function deleteFavorite(req, res) {
+  const groupId = req.params.id;
+  const mealId = req.params.mid
+  try {
+    //delete meal from group
+    const group = await Group.findById(groupId);
+    group.meals = group.meals.filter((meal) => meal.toString() !== mealId);
+    await group.save();
+    //delete meal from meal model
+    const meal = await Meal.findByIdAndDelete(mealId)
+    // res.status(200).json({ message: "Meal deleted successfully" });
+
+    res.status(200).json({ message: "Meal deleted successfully" });
   } catch (error){
     res.status(500).json({ error: "Internal server error" });
   }
