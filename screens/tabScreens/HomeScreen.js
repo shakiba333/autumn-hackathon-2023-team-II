@@ -194,7 +194,7 @@ export default function HomeScreen() {
           colors={["#EAAD37", "rgba(255, 255, 255, 0.00)"]}
           style={styles.gradient}
         >
-          <Pressable style={styles.signOutButton} onPress={handleSignOut}><Text>Sign Out</Text></Pressable>
+          
           <Image
             source={require("../../assets/meal-logo.png")}
             style={styles.logo}

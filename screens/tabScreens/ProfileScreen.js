@@ -1,9 +1,11 @@
 import { LinearGradient } from 'expo-linear-gradient'
 import { useEffect, useState } from 'react'
-import { SafeAreaView, StyleSheet, View, TouchableOpacity, Text, Image, TextInput } from 'react-native'
+import { SafeAreaView, StyleSheet, View, TouchableOpacity, Text, Image, TextInput, Pressable } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LoadingDots from "react-native-loading-dots";
+import { getAuth, signOut } from "firebase/auth";
+
 
 const ProfileScreen = () => {
   const [user, setUser] = useState(null);
@@ -37,6 +39,16 @@ const ProfileScreen = () => {
     console.log('Phone Number:', phoneNumber);
   };
 
+  const auth = getAuth();
+
+  const handleSignOut = () => {
+    signOut(auth).then(() => {
+      // Sign-out successful.
+    }).catch((error) => {
+      // An error happened.
+    });
+  }
+
   if (loading) {
     return (
       <SafeAreaView style={styles.loadingContainer}>
@@ -66,6 +78,7 @@ const ProfileScreen = () => {
           )} */}
           {/* the image below is temporary */}
           <Image source={require('../../assets/images/placeholder.png')} style={styles.userImage} />
+          <Pressable style={styles.signOutButton} onPress={handleSignOut}><Text>Sign Out</Text></Pressable>
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Full Name</Text>
             <TextInput
