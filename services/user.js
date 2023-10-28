@@ -5,6 +5,8 @@ import axios from "axios";
 //Grab Backend Endpoint from Env Variables
 const backend_url = "http://localhost:3000/api/users";
 
+
+
 export async function postUser(user) {
   console.log("post function");
   console.log(user);
