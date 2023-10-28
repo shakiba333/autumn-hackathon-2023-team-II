@@ -86,12 +86,17 @@ function Navigation() {
         avatar: user.photoURL,
       });
     }
-    postUser(formattedInfo)
+    // user && formattedInfo && postUser(formattedInfo);
   }, [user]);
 
   console.log(formattedInfo)
 
-  // user && formattedInfo && postUser(formattedInfo);
+  React.useEffect(() => {
+    // Call postUser when formattedInfo is available
+    if (formattedInfo) {
+      postUser(formattedInfo);
+    }
+  }, [formattedInfo]);
 
   async function handleSignInWithGoogle() {
     const user = await AsyncStorage.getItem("@user");
@@ -424,15 +429,20 @@ function Login() {
     try {
       if (email !== "" && password !== "") {
         const user = await signInWithEmailAndPassword(auth, email, password);
+        console.log(user.user.email)
         const uid = user.user.uid;
         const userData = {
-          email: email,
-          uid: uid,
+          googleId: user.user.uid,
+          name: user.user.displayName,
+          email: user.user.email,
+          avatar: user.user.photoURL,
           // Add other user data as needed
         };
+
+        setUser(user.user)
   
         // Save user data to local storage
-        await AsyncStorage.setItem('userData', JSON.stringify(userData));
+        await AsyncStorage.setItem('@user', JSON.stringify(user));
   
         // After saving the user data, you can navigate to the user's screen or perform other actions
         // Here is where you would navigate to the user's screen or handle the successful login.
@@ -541,7 +551,7 @@ function Register() {
   const [name, setName] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [signupError, setSignupError] = React.useState("");
-  const [users, setUsers] = React.useState("");
+  const [user, setUser] = React.useState("");
   const [loading, setloading] = React.useState(false);
 
   const navigation = useNavigation();
@@ -553,8 +563,8 @@ function Register() {
         const credential = GoogleAuthProvider.credentialFromResult(result);
         const token = credential.accessToken;
         // The signed-in user info.
-        const user = result.user;
-        setUser(user);
+        const userInfo = result.user;
+        setUser(userInfo);
         // IdP data available using getAdditionalUserInfo(result)
         // ...
       })
@@ -609,9 +619,11 @@ function Register() {
               id: users.length + 1,
             };
 
+            setUser(response.user)
+
             const userRef = addDoc(collection(db, "users"), data);
             // userRef.doc(uid).set(data);
-            AsyncStorage.setItem('userData', JSON.stringify(data)).then(() => {
+            AsyncStorage.setItem('@user', JSON.stringify(data)).then(() => {
               // Data stored successfully, you can navigate to the user's screen or perform other actions here
             }).catch((error) => {
               // Handle the error if AsyncStorage fails

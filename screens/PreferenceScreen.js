@@ -70,9 +70,11 @@ const handleFinishSelections = async () => {
     }
     try {
       const token = await AsyncStorage.getItem('@user');
+      console.log(token)
       if (token) {
           const googleInfo = JSON.parse(token);
-          const userToken = await getUser(googleInfo.email)
+          console.log(googleInfo.user.email)
+          const userToken = await getUser(googleInfo.user.email)
           console.log(userToken)
           await updateProfilePreferences(userToken.profile?._id, preferences)
       }

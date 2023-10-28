@@ -8,6 +8,7 @@ module.exports = {
 };
 
 async function create(req, res) {
+  console.log('create a user')
   try {
     const user = await User.findOne({ googleId: req.body.googleId });
 
