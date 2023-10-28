@@ -5,13 +5,13 @@ import { getFirestore } from "firebase/firestore";
 
 // Initialize Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyDytX0WT8hgfyoWuZLAcVT4ZXWApAKVVoo",
-  authDomain: "autumn-hackathon-2023-team-2.firebaseapp.com",
-  projectId: "autumn-hackathon-2023-team-2",
-  storageBucket: "autumn-hackathon-2023-team-2.appspot.com",
-  messagingSenderId: "848983060500",
-  appId: "1:848983060500:web:460b842ffefc5329f33701",
-  measurementId: "G-XVR8EZM0BT"
+  apiKey: process.env.APIKEY,
+  authDomain: process.env.AUTHDOMAIN,
+  projectId: process.env.PROJECTID,
+  storageBucket: process.env.STORAGEBUCKET,
+  messagingSenderId: process.env.MESSAGINGSENDERID,
+  appId: process.env.APPID,
+  measurementId: process.env.MEASUREMENTID
 };
 
 
