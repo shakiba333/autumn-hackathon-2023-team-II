@@ -73,8 +73,8 @@ const handleFinishSelections = async () => {
       console.log(token)
       if (token) {
           const googleInfo = JSON.parse(token);
-          console.log(googleInfo.user.email)
-          const userToken = await getUser(googleInfo.user.email)
+          console.log(googleInfo.email)
+          const userToken = await getUser(googleInfo.email)
           console.log(userToken)
           await updateProfilePreferences(userToken.profile?._id, preferences)
       }
