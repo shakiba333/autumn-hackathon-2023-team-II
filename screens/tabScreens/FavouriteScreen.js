@@ -1,36 +1,51 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SafeAreaView, View, StyleSheet, ScrollView, Text, TouchableOpacity, } from 'react-native'
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { getUserFavorites } from '../../services/group';
+import { deleteFavoriteMeal, getUserFavorites } from '../../services/group';
 import { getUser } from '../../services/user';
 
 const FavouriteScreen = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [recipes, setRecipes] = useState([]);
+  const [user, setUser] = useState(null)
   const navigation = useNavigation();
   const iconName = "favorite-border"
   const iconColor = "black"
 
-  useEffect(() => {
-    const getFavorites = async () => {
-      const token = await AsyncStorage.getItem("@user");
-      try {
+  useFocusEffect(
+    React.useCallback(() => {
+      const getFavorites = async () => {
+        const token = await AsyncStorage.getItem("@user");
+        try {
           const googleInfo = JSON.parse(token);
           const userToken = await getUser(googleInfo.email);
+          setUser(userToken)
           const personalGroupId = userToken.profile.groups[0]._id;
-          const favoriteRecipes = await getUserFavorites(personalGroupId)
-          setRecipes(favoriteRecipes)
-          setIsLoading(false)
-      } catch (err) {
-        console.log('error:', err)
-      }
+          const favoriteRecipes = await getUserFavorites(personalGroupId);
+          setRecipes(favoriteRecipes);
+          setIsLoading(false);
+        } catch (err) {
+          console.log('error:', err);
+          setIsLoading(false);
+        }
+      };
+      getFavorites();
+    }, [])
+  );
+  
 
+  const deleteFavorite = async (mealId) => {
+    const groupId = user.profile.groups[0]._id
+    try {
+
+      await deleteFavoriteMeal(groupId, mealId)
+      setRecipes((prevRecipes) => prevRecipes.filter((recipe) => recipe._id !== mealId));
+    } catch (err) {
+      console.log('error deleting favorite:', err);
     }
-    getFavorites()
-    setTimeout(() => setIsLoading(false), 3000)
-  }, [])
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -49,7 +64,7 @@ const FavouriteScreen = () => {
                   <View style={styles.recipeCuisineLeft}>
                     <Text style={styles.recipeCuisineName}>{recipe.cuisineType}</Text>
                   </View>
-                  <TouchableOpacity style={styles.recipeCuisineRight}>
+                  <TouchableOpacity style={styles.recipeCuisineRight} onPress={() => deleteFavorite(recipe._id)}>
                     <Ionicons name={'star-sharp'} size={16} color={'rgb(149, 184, 57)'}/>
                   </TouchableOpacity>
                 </View>
@@ -98,7 +113,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    flexDirection: 'row'
+    flexDirection: 'row',
+    flexWrap: 'wrap'
   },
   recipeItem: {
     height: '149.25px',
