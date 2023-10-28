@@ -7,6 +7,7 @@ module.exports = {
   updateGroup,
   updateGroupMeals,
   deleteGroup,
+  showFavorites
 };
 
 async function createGroup(req, res) {
@@ -96,6 +97,17 @@ async function deleteGroup(req, res) {
     res.status(200).json({ message: "Group deleted successfully" });
   } catch (error) {
     console.error("Error deleting group:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+async function showFavorites(req, res) {
+  const groupId = req.params.id;
+  try {
+    const userFavorites = await Group.findById(req.params.id).populate("meals");
+    // console.log(userFavorites.meals)
+    res.json(userFavorites.meals);
+  } catch (error){
     res.status(500).json({ error: "Internal server error" });
   }
 }
