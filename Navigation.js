@@ -589,6 +589,7 @@ function Register() {
 
         // IdP data available using getAdditionalUserInfo(result)
         // ...
+
       })
       .catch((error) => {
         // Handle Errors here.
@@ -650,6 +651,7 @@ function Register() {
               // Data stored successfully, you can navigate to the user's screen or perform other actions here
             }).catch((error) => {
               // Handle the error if AsyncStorage fails
+              console.error('Error storing data in AsyncStorage:', error);
             });
           }
         );
