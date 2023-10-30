@@ -16,6 +16,7 @@ const ProfileScreen = () => {
 
   useEffect(() => {
     const fetchUserToken = async () => {
+      console.log('Fetching user token')
       try {
         const token = await AsyncStorage.getItem('@user');
         if (token) {
@@ -31,6 +32,7 @@ const ProfileScreen = () => {
     };
 
     fetchUserToken();
+    
   }, []);
 
   const handleSave = () => {

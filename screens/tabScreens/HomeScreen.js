@@ -25,7 +25,7 @@ import { updateGroupMeals } from "../../services/group";
 import { getAuth, signOut } from "firebase/auth";
 
 export default function HomeScreen() {
-  console.log("dotenv " + process.env.REACT_APP_EDAMAM_APPLICATION_ID);
+  // console.log("dotenv " + process.env.REACT_APP_EDAMAM_APPLICATION_ID);
 
   const [isLoading, setIsLoading] = useState(true);
   const [recipes, setRecipes] = useState([]);

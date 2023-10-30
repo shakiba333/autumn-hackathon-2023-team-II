@@ -412,6 +412,12 @@ function Login() {
         setUser(user);
         // IdP data available using getAdditionalUserInfo(result)
         // ...
+        console.log(userInfo)
+        AsyncStorage.setItem('@user', JSON.stringify(userInfo)).then(() => {
+          // Data stored successfully, you can navigate to the user's screen or perform other actions here
+        }).catch((error) => {
+          // Handle the error if AsyncStorage fails
+        });
       })
       .catch((error) => {
         // Handle Errors here.
@@ -567,6 +573,12 @@ function Register() {
         // The signed-in user info.
         const userInfo = result.user;
         setUser(userInfo);
+        console.log(userInfo)
+        AsyncStorage.setItem('@user', JSON.stringify(userInfo)).then(() => {
+          // Data stored successfully, you can navigate to the user's screen or perform other actions here
+        }).catch((error) => {
+          // Handle the error if AsyncStorage fails
+        });
         // IdP data available using getAdditionalUserInfo(result)
         // ...
       })
@@ -625,6 +637,7 @@ function Register() {
 
             const userRef = addDoc(collection(db, "users"), data);
             // userRef.doc(uid).set(data);
+            console.log(data)
             AsyncStorage.setItem('@user', JSON.stringify(data)).then(() => {
               // Data stored successfully, you can navigate to the user's screen or perform other actions here
             }).catch((error) => {
