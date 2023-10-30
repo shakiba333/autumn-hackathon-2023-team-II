@@ -502,6 +502,7 @@ function Register() {
         const userInfo = result.user;
         console.log(userInfo);
         setUser(userInfo);
+
       })
       .catch((error) => {
         // Handle Errors here.
@@ -532,8 +533,13 @@ function Register() {
 
             const userRef = addDoc(collection(db, "users"), data);
             // userRef.doc(uid).set(data);
-
-            AsyncStorage.setItem("@user", JSON.stringify(data))
+            console.log(data)
+            AsyncStorage.setItem('@user', JSON.stringify(data)).then(() => {
+              // Data stored successfully, you can navigate to the user's screen or perform other actions here
+            }).catch((error) => {
+              // Handle the error if AsyncStorage fails
+              console.error('Error storing data in AsyncStorage:', error);
+            });
           }
         );
       } else {
