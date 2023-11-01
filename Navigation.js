@@ -3,7 +3,6 @@ import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import PreferencesScreen from "./screens/PreferenceScreen";
-import AuthScreen from "./screens/AuthScreen";
 import ExploreScreen from "./screens/tabScreens/ExploreScreen";
 import HomeScreen from "./screens/tabScreens/HomeScreen";
 import FavouriteScreen from "./screens/tabScreens/FavouriteScreen";
@@ -21,16 +20,11 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-
 import * as WebBrowser from "expo-web-browser";
-import * as Google from "expo-auth-session/providers/google";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 
-import { AppRegistry } from "react-native";
-import { useFonts } from "expo-font";
 import { postUser } from "./services/user";
 import { Firebase, db } from "./config/firebase";
 import {
@@ -43,14 +37,6 @@ import {
 } from "firebase/auth";
 import { collection, addDoc, getDocs } from "firebase/firestore";
 
-// const loadFonts = async () => {
-//   await useFonts({
-//     Roboto: require("./assets/fonts/Roboto/Roboto-Regular.ttf"),
-//   });
-// };
-
-// loadFonts();
-
 const auth = getAuth();
 const provider = new GoogleAuthProvider();
 
@@ -62,22 +48,8 @@ function Navigation() {
   const [userInfo, setUserInfo] = React.useState(null);
   const [formattedInfo, setFormattedInfo] = React.useState(null);
   const [showOnboarding, setShowOnboarding] = React.useState(true);
-  // const [request, response, promptAsync] = Google.useAuthRequest({
-  //   androidClientId:
-  //     "356560269346-l8nhb3lgrdoefj5ga4kkkslh0pstah0a.apps.googleusercontent.com",
-  //   iosClientId:
-  //     "356560269346-aj6o16ra0ace2gat2o1hqrp9dnlbit5c.apps.googleusercontent.com",
-  //   webClientId:
-  //     "356560269346-8m1hnjk7mpb9cfgg7ip0c83g0jb3ni0c.apps.googleusercontent.com",
-  // });
 
-  console.log(user?.uid)
-
-  // React.useEffect(() => {
-  //   handleSignInWithGoogle();
-  // }, [response]);
-
-  
+  console.log(user?.uid);
 
   React.useEffect(() => {
     if (user) {
@@ -91,7 +63,7 @@ function Navigation() {
     // user && formattedInfo && postUser(formattedInfo);
   }, [user]);
 
-  console.log(formattedInfo)
+  console.log(formattedInfo);
 
   React.useEffect(() => {
     // Call postUser when formattedInfo is available
@@ -99,41 +71,6 @@ function Navigation() {
       postUser(formattedInfo);
     }
   }, [formattedInfo]);
-
-  // async function handleSignInWithGoogle() {
-  //   const user = await AsyncStorage.getItem("@user");
-  //   if (!user) {
-  //     if (response?.type === "success") {
-  //       await getUserInfo(response.authentication.accessToken);
-  //     }
-  //   } else {
-  //     setUserInfo(JSON.parse(user));
-  //     // setUserInfo(JSON.parse(user));
-  //   }
-  // }
-
-  // const getUserInfo = async (token) => {
-  //   if (!token) return;
-  //   try {
-  //     const response = await fetch(
-  //       "https://www.googleapis.com/userinfo/v2/me",
-  //       {
-  //         headers: { Authorization: `Bearer ${token}` },
-  //       }
-  //     );
-
-  //     const user = await response.json();
-  //     await AsyncStorage.setItem("@user", JSON.stringify(user));
-  //     setUserInfo(user);
-  //   } catch (error) {
-  //     console.error("Error fetching user info:", error);
-  //   }
-  // };
-
-  // async function handleLogout() {
-  //   await AsyncStorage.removeItem("@user");
-  //   setUserInfo(null);
-  // }
 
   React.useEffect(() => {
     const checkOnboardingStatus = async () => {
@@ -158,11 +95,13 @@ function Navigation() {
     onAuthStateChanged(auth, async (authenticatedUser) => {
       if (mount) {
         (await authenticatedUser) ? setUser(authenticatedUser) : setUser(null);
-        AsyncStorage.setItem('@user', JSON.stringify(authenticatedUser)).then(() => {
-          // Data stored successfully, you can navigate to the user's screen or perform other actions here
-        }).catch((error) => {
-          // Handle the error if AsyncStorage fails
-        });
+        AsyncStorage.setItem("@user", JSON.stringify(authenticatedUser))
+          .then(() => {
+            // Data stored successfully, you can navigate to the user's screen or perform other actions here
+          })
+          .catch((error) => {
+            // Handle the error if AsyncStorage fails
+          });
         setIsLoading(false);
       }
     });
@@ -188,29 +127,10 @@ function Navigation() {
         </NavigationContainer>
       ) : (
         <NavigationContainer>
-          {/* <TouchableOpacity
-                style={styles.googleButton}
-                onPress={() => {
-                  promptAsync();
-                }}
-              >
-                <Image
-                  source={require("./assets/images/googleIcon.png")}
-                  style={{ height: 20, width: 20, left: -10, marginRight: 10 }}
-                />
-                <Text>Sign In with Google</Text>
-              </TouchableOpacity> */}
           <Stack.Navigator headerMode="none">
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="Register" component={Register} />
           </Stack.Navigator>
-          {/* <Button
-                title="Sign in with Google"
-                disabled={!request}
-                onPress={() => {
-                  promptAsync();
-                }}
-              /> */}
         </NavigationContainer>
       )}
     </>
@@ -233,7 +153,7 @@ const styles = StyleSheet.create({
     height: 200,
     width: 200,
     marginLeft: 35,
-    justifyContent: "center",  
+    justifyContent: "center",
   },
   input: {
     height: 40,
@@ -296,11 +216,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     paddingBottom: 24,
   },
-
-  // input: {
-  //   fontSize: 24,
-  //   fontFamily: "SatushiRegular",
-  // },
 
   login: {
     flexDirection: "row",
@@ -405,11 +320,11 @@ function Login() {
 
   const navigation = useNavigation();
 
-  const handleGoogleAuth =  () => {
+  const handleGoogleAuth = () => {
     signInWithPopup(auth, provider)
       .then((result) => {
         // This gives you a Google Access Token. You can use it to access the Google API.
-        
+
         const credential = GoogleAuthProvider.credentialFromResult(result);
         const token = credential.accessToken;
         // The signed-in user info.
@@ -417,12 +332,14 @@ function Login() {
         setUser(user);
         // IdP data available using getAdditionalUserInfo(result)
         // ...
-        console.log(userInfo)
-        AsyncStorage.setItem('@user', JSON.stringify(userInfo)).then(() => {
-          // Data stored successfully, you can navigate to the user's screen or perform other actions here
-        }).catch((error) => {
-          // Handle the error if AsyncStorage fails
-        });
+        console.log(userInfo);
+        AsyncStorage.setItem("@user", JSON.stringify(userInfo))
+          .then(() => {
+            // Data stored successfully, you can navigate to the user's screen or perform other actions here
+          })
+          .catch((error) => {
+            // Handle the error if AsyncStorage fails
+          });
       })
       .catch((error) => {
         // Handle Errors here.
@@ -438,11 +355,11 @@ function Login() {
 
   const onLogin = async () => {
     setloading(true);
-  
+
     try {
       if (email !== "" && password !== "") {
         const user = await signInWithEmailAndPassword(auth, email, password);
-        console.log(user.user.email)
+        console.log(user.user.email);
         const uid = user.user.uid;
         const userData = {
           googleId: user.user.uid,
@@ -452,22 +369,21 @@ function Login() {
           // Add other user data as needed
         };
 
-        setUser(user.user)
-  
+        setUser(user.user);
+
         // Save user data to local storage
-        await AsyncStorage.setItem('@user', JSON.stringify(user));
-  
+        await AsyncStorage.setItem("@user", JSON.stringify(user));
+
         // After saving the user data, you can navigate to the user's screen or perform other actions
         // Here is where you would navigate to the user's screen or handle the successful login.
         // For example, you can use navigation libraries like React Navigation to navigate to another screen.
-  
       } else {
         setLoginError("Please enter all the fields");
       }
     } catch (error) {
       setLoginError(error.message);
     }
-  
+
     setloading(false);
   };
 
@@ -485,11 +401,6 @@ function Login() {
     >
       <View style={styles.centeredContainer}>
         <View>
-          {/* <TextInput style={styles.input} />
-            <TextInput style={styles.input} /> */}
-          {/* <TouchableOpacity style={styles.loginButton}>
-                Log In
-              </TouchableOpacity> */}
           <View>
             <Image
               source={require("./assets/meal-logo.png")}
@@ -577,18 +488,8 @@ function Register() {
         const token = credential.accessToken;
         // The signed-in user info.
         const userInfo = result.user;
-        console.log(userInfo)
+        console.log(userInfo);
         setUser(userInfo);
-        
-
-        // AsyncStorage.setItem('@user', JSON.stringify(userInfo)).then(() => {
-        //   // Data stored successfully, you can navigate to the user's screen or perform other actions here
-        // }).catch((error) => {
-        //   // Handle the error if AsyncStorage fails
-        // });
-
-        // IdP data available using getAdditionalUserInfo(result)
-        // ...
       })
       .catch((error) => {
         // Handle Errors here.
@@ -601,31 +502,6 @@ function Register() {
         // ...
       });
   };
-
-  // React.useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const querySnapshot = await getDocs(collection(db, "users"));
-  //       const users = [];
-
-  //       querySnapshot.forEach((documentSnapshot) => {
-  //         users.push({
-  //           ...documentSnapshot.data(),
-  //           key: documentSnapshot.id,
-  //         });
-  //       });
-
-  //       setUsers(users);
-  //       // setLoading(false);
-  //     } catch (error) {
-  //       // Handle errors here, e.g., set an error state
-  //       console.error("Error fetching data:", error);
-  //     }
-  //   };
-
-  //   fetchData(); // Call the async function here
-
-  // }, []);
 
   const onHandleSignup = async () => {
     try {
@@ -641,16 +517,18 @@ function Register() {
               id: users.length + 1,
             };
 
-            setUser(response.user)
+            setUser(response.user);
 
             const userRef = addDoc(collection(db, "users"), data);
             // userRef.doc(uid).set(data);
-            console.log(data)
-            AsyncStorage.setItem('@user', JSON.stringify(data)).then(() => {
-              // Data stored successfully, you can navigate to the user's screen or perform other actions here
-            }).catch((error) => {
-              // Handle the error if AsyncStorage fails
-            });
+            console.log(data);
+            AsyncStorage.setItem("@user", JSON.stringify(data))
+              .then(() => {
+                // Data stored successfully, you can navigate to the user's screen or perform other actions here
+              })
+              .catch((error) => {
+                // Handle the error if AsyncStorage fails
+              });
           }
         );
       } else {
@@ -685,7 +563,7 @@ function Register() {
         <Text style={styles.mainHeader}>Create new account</Text>
         <View style={styles.inputField}>
           <TextInput
-           style={styles.textInput}
+            style={styles.textInput}
             inputStyle={styles.inputField}
             placeholder="Enter Fullname"
             autoCapitalize="words"
@@ -698,7 +576,7 @@ function Register() {
 
         <View style={styles.inputField}>
           <TextInput
-           style={styles.textInput}
+            style={styles.textInput}
             placeholder="Enter email"
             keyboardType="email-address"
             value={email}
@@ -709,7 +587,7 @@ function Register() {
 
         <View style={styles.inputField}>
           <TextInput
-           style={styles.textInput}
+            style={styles.textInput}
             placeholder="Enter password"
             value={password}
             onChangeText={(text) => setPassword(text)}
@@ -726,23 +604,22 @@ function Register() {
             <Text style={styles.loginText}>Sign Up</Text>
           </TouchableOpacity>
         )}
-        <View><Text>OR</Text></View>
+        <View>
+          <Text>OR</Text>
+        </View>
 
         <TouchableOpacity
-              style={styles.googleButton}
-              onPress={handleGoogleAuth}
-            >
-              <Image
-                source={require("./assets/images/googleIcon.png")}
-                style={{ height: 20, width: 20, left: -10, marginRight: 10 }}
-              />
-              <Text>Sign In with Google</Text>
-            </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => navigation.navigate("Login")}
-         
+          style={styles.googleButton}
+          onPress={handleGoogleAuth}
         >
+          <Image
+            source={require("./assets/images/googleIcon.png")}
+            style={{ height: 20, width: 20, left: -10, marginRight: 10 }}
+          />
+          <Text>Sign In with Google</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => navigation.navigate("Login")}>
           <Text>Have an account already? Login</Text>
         </TouchableOpacity>
       </View>
