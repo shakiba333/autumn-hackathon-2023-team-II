@@ -15,13 +15,16 @@ import { LinearGradient } from "expo-linear-gradient";
 import axios from "axios";
 import RecipeList from "../../components/RecipeList";
 import { useNavigation } from "@react-navigation/native";
-import { REACT_APP_API } from "@env";
 import LoadingDots from "react-native-loading-dots";
-import { postMeal, deleteMealByEdamamId } from "../../services/meal";
 import { getUser } from "../../services/user";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { findMealByEdamamId } from "../../services/meal";
+import {
+  postMeal,
+  findMealByEdamamId,
+  deleteMealByEdamamId,
+} from "../../services/meal";
 import { updateGroupMeals } from "../../services/group";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import { getAuth, signOut } from "firebase/auth";
 
 export default function HomeScreen() {
@@ -164,16 +167,6 @@ export default function HomeScreen() {
     }
   };
   console.log(selectedRecipes);
-
-  const handleSignOut = () => {
-    signOut(auth)
-      .then(() => {
-        // Sign-out successful.
-      })
-      .catch((error) => {
-        // An error happened.
-      });
-  };
 
   if (isLoading) {
     return (
