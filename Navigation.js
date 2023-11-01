@@ -100,40 +100,40 @@ function Navigation() {
     }
   }, [formattedInfo]);
 
-  async function handleSignInWithGoogle() {
-    const user = await AsyncStorage.getItem("@user");
-    if (!user) {
-      if (response?.type === "success") {
-        await getUserInfo(response.authentication.accessToken);
-      }
-    } else {
-      setUserInfo(JSON.parse(user));
-      setUserInfo(JSON.parse(user));
-    }
-  }
+  // async function handleSignInWithGoogle() {
+  //   const user = await AsyncStorage.getItem("@user");
+  //   if (!user) {
+  //     if (response?.type === "success") {
+  //       await getUserInfo(response.authentication.accessToken);
+  //     }
+  //   } else {
+  //     setUserInfo(JSON.parse(user));
+  //     // setUserInfo(JSON.parse(user));
+  //   }
+  // }
 
-  const getUserInfo = async (token) => {
-    if (!token) return;
-    try {
-      const response = await fetch(
-        "https://www.googleapis.com/userinfo/v2/me",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+  // const getUserInfo = async (token) => {
+  //   if (!token) return;
+  //   try {
+  //     const response = await fetch(
+  //       "https://www.googleapis.com/userinfo/v2/me",
+  //       {
+  //         headers: { Authorization: `Bearer ${token}` },
+  //       }
+  //     );
 
-      const user = await response.json();
-      await AsyncStorage.setItem("@user", JSON.stringify(user));
-      setUserInfo(user);
-    } catch (error) {
-      console.error("Error fetching user info:", error);
-    }
-  };
+  //     const user = await response.json();
+  //     await AsyncStorage.setItem("@user", JSON.stringify(user));
+  //     setUserInfo(user);
+  //   } catch (error) {
+  //     console.error("Error fetching user info:", error);
+  //   }
+  // };
 
-  async function handleLogout() {
-    await AsyncStorage.removeItem("@user");
-    setUserInfo(null);
-  }
+  // async function handleLogout() {
+  //   await AsyncStorage.removeItem("@user");
+  //   setUserInfo(null);
+  // }
 
   React.useEffect(() => {
     const checkOnboardingStatus = async () => {
@@ -158,6 +158,11 @@ function Navigation() {
     onAuthStateChanged(auth, async (authenticatedUser) => {
       if (mount) {
         (await authenticatedUser) ? setUser(authenticatedUser) : setUser(null);
+        AsyncStorage.setItem('@user', JSON.stringify(authenticatedUser)).then(() => {
+          // Data stored successfully, you can navigate to the user's screen or perform other actions here
+        }).catch((error) => {
+          // Handle the error if AsyncStorage fails
+        });
         setIsLoading(false);
       }
     });
@@ -412,6 +417,12 @@ function Login() {
         setUser(user);
         // IdP data available using getAdditionalUserInfo(result)
         // ...
+        console.log(userInfo)
+        AsyncStorage.setItem('@user', JSON.stringify(userInfo)).then(() => {
+          // Data stored successfully, you can navigate to the user's screen or perform other actions here
+        }).catch((error) => {
+          // Handle the error if AsyncStorage fails
+        });
       })
       .catch((error) => {
         // Handle Errors here.
@@ -566,7 +577,16 @@ function Register() {
         const token = credential.accessToken;
         // The signed-in user info.
         const userInfo = result.user;
+        console.log(userInfo)
         setUser(userInfo);
+        
+
+        // AsyncStorage.setItem('@user', JSON.stringify(userInfo)).then(() => {
+        //   // Data stored successfully, you can navigate to the user's screen or perform other actions here
+        // }).catch((error) => {
+        //   // Handle the error if AsyncStorage fails
+        // });
+
         // IdP data available using getAdditionalUserInfo(result)
         // ...
       })
@@ -625,6 +645,7 @@ function Register() {
 
             const userRef = addDoc(collection(db, "users"), data);
             // userRef.doc(uid).set(data);
+            console.log(data)
             AsyncStorage.setItem('@user', JSON.stringify(data)).then(() => {
               // Data stored successfully, you can navigate to the user's screen or perform other actions here
             }).catch((error) => {
