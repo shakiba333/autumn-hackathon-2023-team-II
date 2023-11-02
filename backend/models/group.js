@@ -13,6 +13,12 @@ const groupSchema = new Schema(
         ref: "Meal",
       },
     ],
+    people: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Profile",
+      },
+    ],
   },
   {
     timestamps: true,

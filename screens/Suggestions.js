@@ -116,8 +116,7 @@ function Suggestions({ selectedMeal }) {
           numberOfIngredients: recipe.recipe.ingredients.length,
           totalTime: recipe.recipe.totalTime,
           shareAs: recipe.recipe.shareAs,
-          date: "",
-          time: "",
+          image: recipe.recipe.image,
         };
       });
       setShouldPostMeal(true);
