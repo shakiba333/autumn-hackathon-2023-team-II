@@ -51,26 +51,26 @@ function Navigation() {
 
   console.log(user?.uid);
 
-  React.useEffect(() => {
-    if (user) {
-      setFormattedInfo({
-        googleId: user.uid,
-        name: user.displayName,
-        email: user.email,
-        avatar: user.photoURL,
-      });
-    }
-    // user && formattedInfo && postUser(formattedInfo);
-  }, [user]);
+  // React.useEffect(() => {
+  //   if (user) {
+  //     setFormattedInfo({
+  //       googleId: user.uid,
+  //       name: user.displayName,
+  //       email: user.email,
+  //       avatar: user.photoURL,
+  //     });
+  //   }
+  //   // user && formattedInfo && postUser(formattedInfo);
+  // }, [user]);
 
-  console.log(formattedInfo);
+  // console.log(formattedInfo);
 
-  React.useEffect(() => {
-    // Call postUser when formattedInfo is available
-    if (formattedInfo) {
-      postUser(formattedInfo);
-    }
-  }, [formattedInfo]);
+  // React.useEffect(() => {
+  //   // Call postUser when formattedInfo is available
+  //   if (formattedInfo) {
+  //     postUser(formattedInfo);
+  //   }
+  // }, [formattedInfo]);
 
   React.useEffect(() => {
     const checkOnboardingStatus = async () => {
@@ -334,22 +334,10 @@ function Login() {
         // ...
         console.log(userInfo);
         AsyncStorage.setItem("@user", JSON.stringify(userInfo))
-          .then(() => {
-            // Data stored successfully, you can navigate to the user's screen or perform other actions here
-          })
-          .catch((error) => {
-            // Handle the error if AsyncStorage fails
-          });
       })
       .catch((error) => {
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // The email of the user's account used.
-        const email = error.customData.email;
-        // The AuthCredential type that was used.
         const credential = GoogleAuthProvider.credentialFromError(error);
-        // ...
+        console.log(error)
       });
   };
 

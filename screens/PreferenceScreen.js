@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { SafeAreaView, View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
 import { AntDesign } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
-import { getUser } from '../services/user'
+import { getUser, postUser } from '../services/user'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { updateProfilePreferences } from '../services/profile' 
 
@@ -13,7 +13,7 @@ function PreferencesScreen({ onComplete }) {
   const [selectedDishTypes, setSelectedDishTypes] = useState([]);
   const [currentStep, setCurrentStep] = useState(1);
   const [user, setUser] = useState(null);
-
+  const [userName, setUserName] = useState('')
 
   const dietLabels = ["Balanced", "High-Fiber", "High-Protein", "Low-Carb", "Low-Fat", "Low-Sodium"];
   const healthLabels = ["Vegetarian", "Vegan", "Pescatarian", "Peanut-Free", "Dairy-Free", "Alcohol-Free", "Wheat-Free"];
@@ -68,21 +68,23 @@ const handleFinishSelections = async () => {
       cuisine: selectedCuisines,
       dish: selectedDishTypes,
     }
-    try {
-      const token = await AsyncStorage.getItem('@user');
-      console.log(token)
-      if (token) {
-          const googleInfo = JSON.parse(token);
-          console.log(googleInfo.email)
-          const userToken = await getUser(googleInfo.email)
-          console.log(userToken)
-          await updateProfilePreferences(userToken.profile?._id, preferences)
-      }
-      onComplete()
-    } catch (err) {
-      console.log('error', err)
-    }
 
+    try {
+      const token = await AsyncStorage.getItem("@user");
+      if (token) {
+        const account = JSON.parse(token);
+        const userInfo = {
+          googleId: account.uid,
+          name: account.displayName,
+          email: account.email,
+        }
+        const userAccount = await postUser(userInfo)
+        await updateProfilePreferences(userAccount.profile, preferences)
+        onComplete()
+      }
+    } catch (error) {
+      console.error("Error fetching user token:", error);
+    }
 };
 
   return (
