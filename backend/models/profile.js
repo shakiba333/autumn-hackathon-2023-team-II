@@ -25,6 +25,12 @@ const profileSchema = new Schema(
         ref: "Group",
       },
     ],
+    friends: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Profile",
+      },
+    ],
   },
   {
     timestamps: true,
