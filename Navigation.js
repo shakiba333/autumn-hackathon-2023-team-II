@@ -494,12 +494,11 @@ function Register() {
   const onHandleSignup = async () => {
     try {
       setloading(true);
-      if (email !== "" && password !== "" && name !== "") {
+      if (email !== "" && password !== "") {
         await createUserWithEmailAndPassword(auth, email, password).then(
           (response) => {
             const uid = response.user.uid;
             const data = {
-              name: name,
               email: email,
               uid: uid,
               id: users.length + 1,
@@ -509,14 +508,8 @@ function Register() {
 
             const userRef = addDoc(collection(db, "users"), data);
             // userRef.doc(uid).set(data);
-            console.log(data);
+
             AsyncStorage.setItem("@user", JSON.stringify(data))
-              .then(() => {
-                // Data stored successfully, you can navigate to the user's screen or perform other actions here
-              })
-              .catch((error) => {
-                // Handle the error if AsyncStorage fails
-              });
           }
         );
       } else {
@@ -549,7 +542,7 @@ function Register() {
           />
         </View>
         <Text style={styles.mainHeader}>Create new account</Text>
-        <View style={styles.inputField}>
+        {/* <View style={styles.inputField}>
           <TextInput
             style={styles.textInput}
             inputStyle={styles.inputField}
@@ -560,7 +553,7 @@ function Register() {
             onChangeText={(text) => setName(text)}
           />
           <MaterialIcons name="mail-outline" size={24} color="gray" />
-        </View>
+        </View> */}
 
         <View style={styles.inputField}>
           <TextInput
