@@ -2,8 +2,8 @@ import * as React from "react";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import PreferencesScreen from "./screens/PreferenceScreen";
-import AuthScreen from "./screens/AuthScreen";
 import ExploreScreen from "./screens/tabScreens/ExploreScreen";
 import HomeScreen from "./screens/tabScreens/HomeScreen";
 import FavouriteScreen from "./screens/tabScreens/FavouriteScreen";
@@ -21,10 +21,8 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-
 import * as WebBrowser from "expo-web-browser";
-
+import * as Google from "expo-auth-session/providers/google";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -49,6 +47,8 @@ import Register from "./screens/Register";
 // };
 
 // loadFonts();
+import { collection, addDoc, getDocs } from "firebase/firestore";
+import PeopleScreen from "./screens/tabScreens/PeopleScreen";
 
 const auth = getAuth();
 const provider = new GoogleAuthProvider();
@@ -61,78 +61,29 @@ function Navigation() {
   const [userInfo, setUserInfo] = React.useState(null);
   const [formattedInfo, setFormattedInfo] = React.useState(null);
   const [showOnboarding, setShowOnboarding] = React.useState(true);
-  // const [request, response, promptAsync] = Google.useAuthRequest({
-  //   androidClientId:
-  //     "356560269346-l8nhb3lgrdoefj5ga4kkkslh0pstah0a.apps.googleusercontent.com",
-  //   iosClientId:
-  //     "356560269346-aj6o16ra0ace2gat2o1hqrp9dnlbit5c.apps.googleusercontent.com",
-  //   webClientId:
-  //     "356560269346-8m1hnjk7mpb9cfgg7ip0c83g0jb3ni0c.apps.googleusercontent.com",
-  // });
 
-  console.log(user?.uid)
+  console.log(user?.uid);
 
   // React.useEffect(() => {
-  //   handleSignInWithGoogle();
-  // }, [response]);
-
-  
-
-  React.useEffect(() => {
-    if (user) {
-      setFormattedInfo({
-        googleId: user.uid,
-        name: user.displayName,
-        email: user.email,
-        avatar: user.photoURL,
-      });
-    }
-    // user && formattedInfo && postUser(formattedInfo);
-  }, [user]);
-
-  console.log(formattedInfo)
-
-  React.useEffect(() => {
-    // Call postUser when formattedInfo is available
-    if (formattedInfo) {
-      postUser(formattedInfo);
-    }
-  }, [formattedInfo]);
-
-  // async function handleSignInWithGoogle() {
-  //   const user = await AsyncStorage.getItem("@user");
-  //   if (!user) {
-  //     if (response?.type === "success") {
-  //       await getUserInfo(response.authentication.accessToken);
-  //     }
-  //   } else {
-  //     setUserInfo(JSON.parse(user));
-  //     // setUserInfo(JSON.parse(user));
+  //   if (user) {
+  //     setFormattedInfo({
+  //       googleId: user.uid,
+  //       name: user.displayName,
+  //       email: user.email,
+  //       avatar: user.photoURL,
+  //     });
   //   }
-  // }
+  //   // user && formattedInfo && postUser(formattedInfo);
+  // }, [user]);
 
-  // const getUserInfo = async (token) => {
-  //   if (!token) return;
-  //   try {
-  //     const response = await fetch(
-  //       "https://www.googleapis.com/userinfo/v2/me",
-  //       {
-  //         headers: { Authorization: `Bearer ${token}` },
-  //       }
-  //     );
+  // console.log(formattedInfo);
 
-  //     const user = await response.json();
-  //     await AsyncStorage.setItem("@user", JSON.stringify(user));
-  //     setUserInfo(user);
-  //   } catch (error) {
-  //     console.error("Error fetching user info:", error);
+  // React.useEffect(() => {
+  //   // Call postUser when formattedInfo is available
+  //   if (formattedInfo) {
+  //     postUser(formattedInfo);
   //   }
-  // };
-
-  // async function handleLogout() {
-  //   await AsyncStorage.removeItem("@user");
-  //   setUserInfo(null);
-  // }
+  // }, [formattedInfo]);
 
   React.useEffect(() => {
     const checkOnboardingStatus = async () => {
@@ -157,11 +108,13 @@ function Navigation() {
     onAuthStateChanged(auth, async (authenticatedUser) => {
       if (mount) {
         (await authenticatedUser) ? setUser(authenticatedUser) : setUser(null);
-        AsyncStorage.setItem('@user', JSON.stringify(authenticatedUser)).then(() => {
-          // Data stored successfully, you can navigate to the user's screen or perform other actions here
-        }).catch((error) => {
-          // Handle the error if AsyncStorage fails
-        });
+        AsyncStorage.setItem("@user", JSON.stringify(authenticatedUser))
+          .then(() => {
+            // Data stored successfully, you can navigate to the user's screen or perform other actions here
+          })
+          .catch((error) => {
+            // Handle the error if AsyncStorage fails
+          });
         setIsLoading(false);
       }
     });
@@ -187,18 +140,6 @@ function Navigation() {
         </NavigationContainer>
       ) : (
         <NavigationContainer>
-          {/* <TouchableOpacity
-                style={styles.googleButton}
-                onPress={() => {
-                  promptAsync();
-                }}
-              >
-                <Image
-                  source={require("./assets/images/googleIcon.png")}
-                  style={{ height: 20, width: 20, left: -10, marginRight: 10 }}
-                />
-                <Text>Sign In with Google</Text>
-              </TouchableOpacity> */}
           <Stack.Navigator headerMode="none">
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="Register" component={Register} />
@@ -225,7 +166,7 @@ const styles = StyleSheet.create({
     height: 200,
     width: 200,
     marginLeft: 35,
-    justifyContent: "center",  
+    justifyContent: "center",
   },
   input: {
     height: 40,
@@ -289,11 +230,6 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
 
-  // input: {
-  //   fontSize: 24,
-  //   fontFamily: "SatushiRegular",
-  // },
-
   login: {
     flexDirection: "row",
     backgroundColor: "#BC8738",
@@ -335,6 +271,7 @@ export default Navigation;
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+const TopTabs = createMaterialTopTabNavigator();
 
 function HomeStackNavigator() {
   return (
@@ -382,11 +319,53 @@ function TabGroup() {
       })}
     >
       <Tab.Screen name="HomeStack" component={HomeStackNavigator} />
-      <Tab.Screen name="Explore" component={ExploreScreen} />
+      <Tab.Screen name="Explore" component={TopTabsGroups} />
       <Tab.Screen name="Favourite" component={FavouriteScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );
+}
+
+function TopTabsGroups() {
+  return (
+    <TopTabs.Navigator
+      screenOptions={{
+        tabBarLabelStyle: {
+          textTransform: "capitalize",
+          fontWeight: "bold",
+        },
+        tabBarIndicatorStyle: {
+          height: 5,
+          borderRadius: 5,
+          backgroundColor: "#EAAD37",
+        },
+      }}
+    >
+      <TopTabs.Screen name="Recipes" component={ExploreScreen} />
+      <TopTabs.Screen name="People" component={PeopleScreen} />
+    </TopTabs.Navigator>
+  )
+}
+
+function TopTabsGroups() {
+  return (
+    <TopTabs.Navigator
+      screenOptions={{
+        tabBarLabelStyle: {
+          textTransform: "capitalize",
+          fontWeight: "bold",
+        },
+        tabBarIndicatorStyle: {
+          height: 5,
+          borderRadius: 5,
+          backgroundColor: "#EAAD37",
+        },
+      }}
+    >
+      <TopTabs.Screen name="Recipes" component={ExploreScreen} />
+      <TopTabs.Screen name="People" component={PeopleScreen} />
+    </TopTabs.Navigator>
+  )
 }
 
 // function Login() {
@@ -444,24 +423,24 @@ function TabGroup() {
 //           // Add other user data as needed
 //         };
 
-//         setUser(user.user)
+        setUser(user.user)
   
-//         // Save user data to local storage
-//         await AsyncStorage.setItem('@user', JSON.stringify(user));
+        // Save user data to local storage
+        await AsyncStorage.setItem('@user', JSON.stringify(user));
   
-//         // After saving the user data, you can navigate to the user's screen or perform other actions
-//         // Here is where you would navigate to the user's screen or handle the successful login.
-//         // For example, you can use navigation libraries like React Navigation to navigate to another screen.
+        // After saving the user data, you can navigate to the user's screen or perform other actions
+        // Here is where you would navigate to the user's screen or handle the successful login.
+        // For example, you can use navigation libraries like React Navigation to navigate to another screen.
   
-//       } else {
-//         setLoginError("Please enter all the fields");
-//       }
-//     } catch (error) {
-//       setLoginError(error.message);
-//     }
+      } else {
+        setLoginError("Please enter all the fields");
+      }
+    } catch (error) {
+      setLoginError(error.message);
+    }
   
-//     setloading(false);
-//   };
+    setloading(false);
+  };
 
 //   return (
 //     <LinearGradient

@@ -15,18 +15,19 @@ import { LinearGradient } from "expo-linear-gradient";
 import axios from "axios";
 import RecipeList from "../../components/RecipeList";
 import { useNavigation } from "@react-navigation/native";
-import { REACT_APP_API } from "@env";
 import LoadingDots from "react-native-loading-dots";
-import { postMeal, deleteMealByEdamamId } from "../../services/meal";
 import { getUser } from "../../services/user";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { findMealByEdamamId } from "../../services/meal";
+import {
+  postMeal,
+  findMealByEdamamId,
+  deleteMealByEdamamId,
+} from "../../services/meal";
 import { updateGroupMeals } from "../../services/group";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import { getAuth, signOut } from "firebase/auth";
 
 export default function HomeScreen() {
-  // console.log("dotenv " + process.env.REACT_APP_EDAMAM_APPLICATION_ID);
-
   const [isLoading, setIsLoading] = useState(true);
   const [recipes, setRecipes] = useState([]);
   const foodItems = [
@@ -87,7 +88,9 @@ export default function HomeScreen() {
   const auth = getAuth();
 
   useEffect(() => {
-    const edamamApiUrl = `https://api.edamam.com/api/recipes/v2?type=public&q=${randomFood}&app_id=41abb1f4&app_key=375f32061b6e7ab61e5b1808f4469c1e`;
+    const edamamAppId = process.env.REACT_APP_EDAMAM_APP_ID;
+    const edamamApiKey = process.env.REACT_APP_EDAMAM_API_KEY;
+    const edamamApiUrl = `https://api.edamam.com/api/recipes/v2?type=public&q=${randomFood}&app_id=${edamamAppId}&app_key=${edamamApiKey}`;
     axios
       .get(edamamApiUrl)
       .then((response) => {
@@ -165,14 +168,6 @@ export default function HomeScreen() {
   };
   console.log(selectedRecipes);
 
-  const handleSignOut = () => {
-    signOut(auth).then(() => {
-      // Sign-out successful.
-    }).catch((error) => {
-      // An error happened.
-    });
-  }
-
   if (isLoading) {
     return (
       <SafeAreaView style={styles.loadingContainer}>
@@ -194,7 +189,6 @@ export default function HomeScreen() {
           colors={["#EAAD37", "rgba(255, 255, 255, 0.00)"]}
           style={styles.gradient}
         >
-          
           <Image
             source={require("../../assets/meal-logo.png")}
             style={styles.logo}

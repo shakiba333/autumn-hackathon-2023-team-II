@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { SafeAreaView, View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
+import { SafeAreaView, View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput } from "react-native";
 import { AntDesign } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
-import { getUser } from '../services/user'
+import { getUser, postUser } from '../services/user'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { updateProfilePreferences } from '../services/profile' 
 
@@ -11,9 +11,10 @@ function PreferencesScreen({ onComplete }) {
   const [selectedDietLabels, setSelectedDietLabels] = useState([]);
   const [selectedCuisines, setSelectedCuisines] = useState([]);
   const [selectedDishTypes, setSelectedDishTypes] = useState([]);
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(0);
   const [user, setUser] = useState(null);
-
+  const [userName, setUserName] = useState('')
+  const [isFocused, setIsFocused] = useState(false);
 
   const dietLabels = ["Balanced", "High-Fiber", "High-Protein", "Low-Carb", "Low-Fat", "Low-Sodium"];
   const healthLabels = ["Vegetarian", "Vegan", "Pescatarian", "Peanut-Free", "Dairy-Free", "Alcohol-Free", "Wheat-Free"];
@@ -60,6 +61,14 @@ function PreferencesScreen({ onComplete }) {
     }
   };
 
+  const handleFocus = () => {
+    setIsFocused(true);
+  };
+
+  const handleBlur = () => {
+    setIsFocused(false);
+  };
+
 const handleFinishSelections = async () => {
 
     const preferences = {
@@ -69,26 +78,44 @@ const handleFinishSelections = async () => {
       dish: selectedDishTypes,
     }
     try {
-      const token = await AsyncStorage.getItem('@user');
-      console.log(token)
+      const token = await AsyncStorage.getItem("@user");
       if (token) {
-          const googleInfo = JSON.parse(token);
-          console.log(googleInfo.email)
-          const userToken = await getUser(googleInfo.email)
-          console.log(userToken)
-          await updateProfilePreferences(userToken.profile?._id, preferences)
+        const account = JSON.parse(token);
+        const userInfo = {
+          googleId: account.uid,
+          name: userName,
+          email: account.email,
+        }
+        const userAccount = await postUser(userInfo)
+        await updateProfilePreferences(userAccount.profile, preferences)
+        onComplete()
       }
-      onComplete()
-    } catch (err) {
-      console.log('error', err)
+    } catch (error) {
+      console.error("Error fetching user token:", error);
     }
-
 };
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-          <Text style={styles.sectionHeader}>Step {currentStep} of 4</Text>
+          <Text style={styles.sectionHeader}>Step {currentStep + 1} of 5</Text>
+          {currentStep === 0 && (
+            <View
+            style={[
+              styles.inputContainer,
+              { borderBottomColor: isFocused ? "rgb(149, 184, 57)" : "#000" },
+            ]}
+          >
+            <TextInput
+              style={[styles.searchInput, isFocused && { outline: "none" }]}
+              placeholder="Enter Full Name"
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+              value={userName}
+              onChangeText={(text) => setUserName(text)}
+            />
+          </View>
+          )}
           {currentStep === 1 && (
             <>
                 <Text style={styles.labelHeader}>Select your diet type</Text>
@@ -210,6 +237,18 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "700",
     color: "#8ABB00",
+  },
+  searchInput: {
+    flex: 1,
+    padding: 10,
+  },
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderBottomWidth: 2,
+    paddingHorizontal: 10,
+    width: 250,
+    marginTop: 20,
   },
   labelHeader: {
     fontSize: 18,

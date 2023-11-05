@@ -2,13 +2,18 @@ import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import RecipeList from "../components/RecipeList";
 import axios from "axios";
+import { getUser } from "../services/user";
+import {
+  postMeal,
+  findMealByEdamamId,
+  deleteMealByEdamamId,
+} from "../services/meal";
+import { updateGroupMeals } from "../services/group";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
-
-
 import LoadingScreen from "./LoadingScreen";
-import { postMeal, deleteMealByEdamamId } from "../services/meal";
 
 function Suggestions({ selectedMeal }) {
   const [recipes, setRecipes] = useState([]);
@@ -33,20 +38,22 @@ function Suggestions({ selectedMeal }) {
   useEffect(() => {
     console.log("selected was", selectedMeal);
     let edamamApiUrl;
+    const edamamAppId = process.env.REACT_APP_EDAMAM_APP_ID;
+    const edamamApiKey = process.env.REACT_APP_EDAMAM_API_KEY;
     if (selectedMeal === "Teatime") {
-      edamamApiUrl = `https://api.edamam.com/api/recipes/v2?type=public&q=tea&app_id=41abb1f4&app_key=375f32061b6e7ab61e5b1808f4469c1e`;
+      edamamApiUrl = `https://api.edamam.com/api/recipes/v2?type=public&q=tea&app_id=${edamamAppId}&app_key=${edamamApiKey}`;
     } else if (selectedMeal === "Brunch") {
-      edamamApiUrl = `https://api.edamam.com/api/recipes/v2?type=public&q=brunch&app_id=41abb1f4&app_key=375f32061b6e7ab61e5b1808f4469c1e`;
+      edamamApiUrl = `https://api.edamam.com/api/recipes/v2?type=public&q=brunch&app_id=${edamamAppId}&app_key=${edamamApiKey}`;
     } else if (selectedMeal === "Lunch/Dinner") {
-      edamamApiUrl = `https://api.edamam.com/api/recipes/v2?type=public&q=lunch&app_id=41abb1f4&app_key=375f32061b6e7ab61e5b1808f4469c1e`;
+      edamamApiUrl = `https://api.edamam.com/api/recipes/v2?type=public&q=lunch&app_id=${edamamAppId}&app_key=${edamamApiKey}`;
     } else {
-      edamamApiUrl = `https://api.edamam.com/api/recipes/v2?type=public&q=steak%20bites&app_id=41abb1f4&app_key=375f32061b6e7ab61e5b1808f4469c1e&mealType=${selectedMeal}`;
+      edamamApiUrl = `https://api.edamam.com/api/recipes/v2?type=public&q=steak%20bites&app_id=${edamamAppId}&app_key=${edamamApiKey}&mealType=${selectedMeal}`;
     }
     axios
       .get(edamamApiUrl)
       .then((response) => {
         const recipeData = response.data.hits || [];
-        console.log(recipeData.length, "length")
+        console.log(recipeData.length, "length");
         if (recipeData.length < 6) {
           setRecipes(recipeData);
         } else {
@@ -54,7 +61,7 @@ function Suggestions({ selectedMeal }) {
           randomNumber = randomNumber < 4 ? 4 : randomNumber;
           const sliceEnd = randomNumber;
           const sliceStart = randomNumber - 4;
-          console.log(sliceEnd, sliceStart)
+          console.log(sliceEnd, sliceStart);
           setRecipes(recipeData.slice(sliceStart, sliceEnd));
         }
         setTimeout(() => setIsLoading(false), 3000);
@@ -68,14 +75,31 @@ function Suggestions({ selectedMeal }) {
   useEffect(() => {
     if (shouldPostMeal) {
       postMeal(saveFormattedMeal);
+      handleUpdateGroup(saveFormattedMeal.api_id);
     }
   }, [saveFormattedMeal, shouldPostMeal]);
 
   useEffect(() => {
-    if (shouldDeleteMeal) {
-      deleteMealByEdamamId(deleteMeal);
-    }
+    const deleteAndHandleUpdate = async () => {
+      if (shouldDeleteMeal) {
+        await handleUpdateGroup(deleteMeal);
+        await deleteMealByEdamamId(deleteMeal);
+      }
+    };
+
+    deleteAndHandleUpdate();
   }, [deleteMeal, shouldDeleteMeal]);
+
+  const handleUpdateGroup = async (edamamId) => {
+    const token = await AsyncStorage.getItem("@user");
+    if (token) {
+      const googleInfo = JSON.parse(token);
+      const userToken = await getUser(googleInfo.email);
+      const personalGroupId = userToken.profile.groups[0]._id;
+      const meal = await findMealByEdamamId(edamamId);
+      await updateGroupMeals(personalGroupId, meal?._id);
+    }
+  };
 
   const handleRecipeSelect = (recipe) => {
     const index = selectedRecipes.findIndex(
@@ -92,8 +116,7 @@ function Suggestions({ selectedMeal }) {
           numberOfIngredients: recipe.recipe.ingredients.length,
           totalTime: recipe.recipe.totalTime,
           shareAs: recipe.recipe.shareAs,
-          date: "",
-          time: "",
+          image: recipe.recipe.image,
         };
       });
       setShouldPostMeal(true);
@@ -122,10 +145,10 @@ function Suggestions({ selectedMeal }) {
         onSelect={handleRecipeSelect}
         selectedRecipes={selectedRecipes}
       />
-      <TouchableOpacity style={styles.button}>
+      {/* <TouchableOpacity style={styles.button}>
         <Text style={styles.buttonText}>Save</Text>
         <Ionicons name="arrow-forward" size={24} color="white" />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 }

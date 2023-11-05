@@ -9,20 +9,13 @@ import {
   TouchableOpacity,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import axios from "axios";
 import LoadingDots from "react-native-loading-dots";
-import RecipeList from "../../components/RecipeList";
-import { MaterialIcons } from "@expo/vector-icons";
 
-const ExploreScreen = () => {
+const PeopleScreen = () => {
   const [isFocused, setIsFocused] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [recipes, setRecipes] = useState([]);
-  let randomNumber = Math.floor(Math.random() * 20);
-  randomNumber = randomNumber < 6 ? 6 : randomNumber;
-  const iconName = "favorite-border";
-  const iconColor = "black";
+  const [people, setPeople] = useState([]);
 
   const handleFocus = () => {
     setIsFocused(true);
@@ -32,27 +25,18 @@ const ExploreScreen = () => {
     setIsFocused(false);
   };
 
-  const handleSearchIconClick = async () => {
-    setIsLoading(true);
-    const edamamAppId = process.env.REACT_APP_EDAMAM_APP_ID;
-    const edamamApiKey = process.env.REACT_APP_EDAMAM_API_KEY;
-    const edamamApiUrl = `https://api.edamam.com/api/recipes/v2?type=public&q=${searchText}&app_id=${edamamAppId}&app_key=${edamamApiKey}`;
+  const handleSearchIconClick = async () => {  
     try {
-      const recipeData = await axios.get(edamamApiUrl);
-      const recipes = recipeData.data.hits || [];
-      const sliceEnd = randomNumber;
-      const sliceStart = randomNumber - 6;
-      setRecipes(recipes.slice(sliceStart, sliceEnd));
-      setIsLoading(false);
+
     } catch (error) {
-      console.error("Error fetching recipes:", error);
+      console.error("Error fetching people:", error);
     }
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.header}>Find Recipes</Text>
+        <Text style={styles.header}>Find People</Text>
         <View
           style={[
             styles.inputContainer,
@@ -61,7 +45,7 @@ const ExploreScreen = () => {
         >
           <TextInput
             style={[styles.searchInput, isFocused && { outline: "none" }]}
-            placeholder="Search for recipes"
+            placeholder="Search people"
             onFocus={handleFocus}
             onBlur={handleBlur}
             value={searchText}
@@ -81,11 +65,6 @@ const ExploreScreen = () => {
             </View>
           ) : (
             <ScrollView contentContainerStyle={styles.scrollRecipeContainer}>
-              <RecipeList
-                recipes={recipes}
-                iconColor={iconColor}
-                iconName={iconName}
-              />
             </ScrollView>
           )}
         </View>
@@ -96,8 +75,6 @@ const ExploreScreen = () => {
 
 const styles = StyleSheet.create({
   loadingContainer: {
-    // backgroundColor: '#EAA237',
-    // height: '100vh',
     alignItems: "center",
     justifyContent: "center",
     gap: 40,
@@ -151,4 +128,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ExploreScreen;
+export default PeopleScreen;
