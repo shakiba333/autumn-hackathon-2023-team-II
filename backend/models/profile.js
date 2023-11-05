@@ -28,7 +28,7 @@ const profileSchema = new Schema(
     friends: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Profile",
+        ref: "User",
       },
     ],
   },
