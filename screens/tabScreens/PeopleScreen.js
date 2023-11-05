@@ -13,7 +13,7 @@ import {
 import Icon from "react-native-vector-icons/FontAwesome";
 import LoadingDots from "react-native-loading-dots";
 import { useFocusEffect } from "@react-navigation/native";
-import { addFriend, getAllProfiles } from "../../services/profile";
+import { addFriend, getAllProfiles, deleteFriend } from "../../services/profile";
 import { getUser, getAllUsers } from "../../services/user";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AntDesign } from '@expo/vector-icons';
@@ -64,8 +64,16 @@ const PeopleScreen = () => {
       console.error("Error adding a friend:", error);
     }
   };
-  
 
+  const handleDeleteFriend = async (person) => {
+    try {
+      const updatedUserFriends = userFriends.filter((friendId) => friendId !== person._id);
+      setUserFriends(updatedUserFriends);
+      await deleteFriend(user._id, person._id);
+    } catch (error) {
+      console.error("Error adding a friend:", error);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -107,7 +115,11 @@ const PeopleScreen = () => {
                       backgroundColor: pressed ? "#f0f0f0" : "transparent",
                     },
                   ]}
-                  onPress={() => handleAddFriend(person)}
+                  onPress={() =>
+                    userFriends.includes(person._id)
+                      ? handleDeleteFriend(person)
+                      : handleAddFriend(person)
+                  }
                 >
                   <View style={styles.personInfo}>
                     <Image source={require('../../assets/images/placeholder.png')} style={styles.personImage}/>

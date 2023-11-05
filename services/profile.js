@@ -41,3 +41,15 @@ export async function addFriend(userId, friendId) {
     return null;
   }
 }
+
+export async function deleteFriend(userId, friendId) {
+  try {
+    const response = await axios.delete(`${backend_url}/${userId}/friends/${friendId}`, {
+      headers: { "Content-Type": "application/json" },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
