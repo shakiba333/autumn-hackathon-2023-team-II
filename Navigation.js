@@ -24,13 +24,10 @@ import { LinearGradient } from "expo-linear-gradient";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import * as WebBrowser from "expo-web-browser";
-import * as Google from "expo-auth-session/providers/google";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
 
-import { AppRegistry } from "react-native";
-import { useFonts } from "expo-font";
 import { postUser } from "./services/user";
 import { Firebase, db } from "./config/firebase";
 import {
@@ -41,7 +38,9 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
 } from "firebase/auth";
-import { collection, addDoc, getDocs } from "firebase/firestore";
+
+import Login from "./screens/login";
+import Register from "./screens/Register";
 
 // const loadFonts = async () => {
 //   await useFonts({
@@ -204,13 +203,6 @@ function Navigation() {
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="Register" component={Register} />
           </Stack.Navigator>
-          {/* <Button
-                title="Sign in with Google"
-                disabled={!request}
-                onPress={() => {
-                  promptAsync();
-                }}
-              /> */}
         </NavigationContainer>
       )}
     </>
@@ -397,357 +389,357 @@ function TabGroup() {
   );
 }
 
-function Login() {
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [loginError, setLoginError] = React.useState("");
-  const [loading, setloading] = React.useState(false);
+// function Login() {
+//   const [email, setEmail] = React.useState("");
+//   const [password, setPassword] = React.useState("");
+//   const [loginError, setLoginError] = React.useState("");
+//   const [loading, setloading] = React.useState(false);
 
-  const navigation = useNavigation();
+//   const navigation = useNavigation();
 
-  const handleGoogleAuth =  () => {
-    signInWithPopup(auth, provider)
-      .then((result) => {
-        // This gives you a Google Access Token. You can use it to access the Google API.
+//   const handleGoogleAuth =  () => {
+//     signInWithPopup(auth, provider)
+//       .then((result) => {
+//         // This gives you a Google Access Token. You can use it to access the Google API.
         
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
-        // The signed-in user info.
-        const user = result.user;
-        setUser(user);
-        // IdP data available using getAdditionalUserInfo(result)
-        // ...
-        console.log(userInfo)
-        AsyncStorage.setItem('@user', JSON.stringify(userInfo)).then(() => {
-          // Data stored successfully, you can navigate to the user's screen or perform other actions here
-        }).catch((error) => {
-          // Handle the error if AsyncStorage fails
-        });
-      })
-      .catch((error) => {
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // The email of the user's account used.
-        const email = error.customData.email;
-        // The AuthCredential type that was used.
-        const credential = GoogleAuthProvider.credentialFromError(error);
-        // ...
-      });
-  };
+//         const credential = GoogleAuthProvider.credentialFromResult(result);
+//         const token = credential.accessToken;
+//         // The signed-in user info.
+//         const user = result.user;
+//         setUser(user);
+//         // IdP data available using getAdditionalUserInfo(result)
+//         // ...
+//         console.log(userInfo)
+//         AsyncStorage.setItem('@user', JSON.stringify(userInfo)).then(() => {
+//           // Data stored successfully, you can navigate to the user's screen or perform other actions here
+//         }).catch((error) => {
+//           // Handle the error if AsyncStorage fails
+//         });
+//       })
+//       .catch((error) => {
+//         // Handle Errors here.
+//         const errorCode = error.code;
+//         const errorMessage = error.message;
+//         // The email of the user's account used.
+//         const email = error.customData.email;
+//         // The AuthCredential type that was used.
+//         const credential = GoogleAuthProvider.credentialFromError(error);
+//         // ...
+//       });
+//   };
 
-  const onLogin = async () => {
-    setloading(true);
+//   const onLogin = async () => {
+//     setloading(true);
   
-    try {
-      if (email !== "" && password !== "") {
-        const user = await signInWithEmailAndPassword(auth, email, password);
-        console.log(user.user.email)
-        const uid = user.user.uid;
-        const userData = {
-          googleId: user.user.uid,
-          name: user.user.displayName,
-          email: user.user.email,
-          avatar: user.user.photoURL,
-          // Add other user data as needed
-        };
+//     try {
+//       if (email !== "" && password !== "") {
+//         const user = await signInWithEmailAndPassword(auth, email, password);
+//         console.log(user.user.email)
+//         const uid = user.user.uid;
+//         const userData = {
+//           googleId: user.user.uid,
+//           name: user.user.displayName,
+//           email: user.user.email,
+//           avatar: user.user.photoURL,
+//           // Add other user data as needed
+//         };
 
-        setUser(user.user)
+//         setUser(user.user)
   
-        // Save user data to local storage
-        await AsyncStorage.setItem('@user', JSON.stringify(user));
+//         // Save user data to local storage
+//         await AsyncStorage.setItem('@user', JSON.stringify(user));
   
-        // After saving the user data, you can navigate to the user's screen or perform other actions
-        // Here is where you would navigate to the user's screen or handle the successful login.
-        // For example, you can use navigation libraries like React Navigation to navigate to another screen.
+//         // After saving the user data, you can navigate to the user's screen or perform other actions
+//         // Here is where you would navigate to the user's screen or handle the successful login.
+//         // For example, you can use navigation libraries like React Navigation to navigate to another screen.
   
-      } else {
-        setLoginError("Please enter all the fields");
-      }
-    } catch (error) {
-      setLoginError(error.message);
-    }
+//       } else {
+//         setLoginError("Please enter all the fields");
+//       }
+//     } catch (error) {
+//       setLoginError(error.message);
+//     }
   
-    setloading(false);
-  };
+//     setloading(false);
+//   };
 
-  return (
-    <LinearGradient
-      colors={["rgb(228, 181, 92)", "white"]}
-      style={{
-        flex: 1,
-        width: "100%",
-        paddingHorizontal: 15,
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <View style={styles.centeredContainer}>
-        <View>
-          {/* <TextInput style={styles.input} />
-            <TextInput style={styles.input} /> */}
-          {/* <TouchableOpacity style={styles.loginButton}>
-                Log In
-              </TouchableOpacity> */}
-          <View>
-            <Image
-              source={require("./assets/meal-logo.png")}
-              style={styles.logo}
-            />
-          </View>
-          <View>
-            <View style={styles.inputField}>
-              <TextInput
-                style={styles.textInput}
-                placeholder="Enter your email"
-                placeholderTextColor="#6B6B6B"
-                keyboardType="email-address"
-                value={email}
-                onChangeText={(text) => setEmail(text)}
-              />
-              <MaterialIcons name="mail-outline" size={24} color="gray" />
-            </View>
+//   return (
+//     <LinearGradient
+//       colors={["rgb(228, 181, 92)", "white"]}
+//       style={{
+//         flex: 1,
+//         width: "100%",
+//         paddingHorizontal: 15,
+//         flexDirection: "column",
+//         justifyContent: "center",
+//         alignItems: "center",
+//       }}
+//     >
+//       <View style={styles.centeredContainer}>
+//         <View>
+//           {/* <TextInput style={styles.input} />
+//             <TextInput style={styles.input} /> */}
+//           {/* <TouchableOpacity style={styles.loginButton}>
+//                 Log In
+//               </TouchableOpacity> */}
+//           <View>
+//             <Image
+//               source={require("./assets/meal-logo.png")}
+//               style={styles.logo}
+//             />
+//           </View>
+//           <View>
+//             <View style={styles.inputField}>
+//               <TextInput
+//                 style={styles.textInput}
+//                 placeholder="Enter your email"
+//                 placeholderTextColor="#6B6B6B"
+//                 keyboardType="email-address"
+//                 value={email}
+//                 onChangeText={(text) => setEmail(text)}
+//               />
+//               <MaterialIcons name="mail-outline" size={24} color="gray" />
+//             </View>
 
-            <View style={styles.inputField}>
-              <TextInput
-                style={styles.textInput}
-                placeholder="Password"
-                placeholderTextColor="#6B6B6B"
-                value={password}
-                onChangeText={(text) => setPassword(text)}
-              />
-              <MaterialIcons name="lock" size={24} color="gray" />
-            </View>
+//             <View style={styles.inputField}>
+//               <TextInput
+//                 style={styles.textInput}
+//                 placeholder="Password"
+//                 placeholderTextColor="#6B6B6B"
+//                 value={password}
+//                 onChangeText={(text) => setPassword(text)}
+//               />
+//               <MaterialIcons name="lock" size={24} color="gray" />
+//             </View>
 
-            {loading ? (
-              <View>
-                <Text>Loading</Text>
-              </View>
-            ) : (
-              <TouchableOpacity style={styles.login} onPress={onLogin}>
-                <Text style={styles.loginText}>Log In</Text>
-              </TouchableOpacity>
-            )}
+//             {loading ? (
+//               <View>
+//                 <Text>Loading</Text>
+//               </View>
+//             ) : (
+//               <TouchableOpacity style={styles.login} onPress={onLogin}>
+//                 <Text style={styles.loginText}>Log In</Text>
+//               </TouchableOpacity>
+//             )}
 
-            <TouchableOpacity
-              style={styles.googleButton}
-              onPress={handleGoogleAuth}
-            >
-              <Image
-                source={require("./assets/images/googleIcon.png")}
-                style={{ height: 20, width: 20, left: -10, marginRight: 10 }}
-              />
-              <Text>Sign In with Google</Text>
-            </TouchableOpacity>
-          </View>
-          <Text
-            style={{ textAlign: "center", marginBottom: 20, marginTop: 20 }}
-          >
-            New User?
-          </Text>
+//             <TouchableOpacity
+//               style={styles.googleButton}
+//               onPress={handleGoogleAuth}
+//             >
+//               <Image
+//                 source={require("./assets/images/googleIcon.png")}
+//                 style={{ height: 20, width: 20, left: -10, marginRight: 10 }}
+//               />
+//               <Text>Sign In with Google</Text>
+//             </TouchableOpacity>
+//           </View>
+//           <Text
+//             style={{ textAlign: "center", marginBottom: 20, marginTop: 20 }}
+//           >
+//             New User?
+//           </Text>
 
-          <TouchableOpacity
-            onPress={() => navigation.navigate("Register")}
-            style={styles.button}
-          >
-            <Text>Sign Up</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </LinearGradient>
-  );
-}
+//           <TouchableOpacity
+//             onPress={() => navigation.navigate("Register")}
+//             style={styles.button}
+//           >
+//             <Text>Sign Up</Text>
+//           </TouchableOpacity>
+//         </View>
+//       </View>
+//     </LinearGradient>
+//   );
+// }
 
-function Register() {
-  const [email, setEmail] = React.useState("");
-  const [name, setName] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [signupError, setSignupError] = React.useState("");
-  const [user, setUser] = React.useState("");
-  const [loading, setloading] = React.useState(false);
+// function Register() {
+//   const [email, setEmail] = React.useState("");
+//   const [name, setName] = React.useState("");
+//   const [password, setPassword] = React.useState("");
+//   const [signupError, setSignupError] = React.useState("");
+//   const [user, setUser] = React.useState("");
+//   const [loading, setloading] = React.useState(false);
 
-  const navigation = useNavigation();
+//   const navigation = useNavigation();
 
-  const handleGoogleAuth = () => {
-    signInWithPopup(auth, provider)
-      .then((result) => {
-        // This gives you a Google Access Token. You can use it to access the Google API.
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
-        // The signed-in user info.
-        const userInfo = result.user;
-        console.log(userInfo)
-        setUser(userInfo);
+//   const handleGoogleAuth = () => {
+//     signInWithPopup(auth, provider)
+//       .then((result) => {
+//         // This gives you a Google Access Token. You can use it to access the Google API.
+//         const credential = GoogleAuthProvider.credentialFromResult(result);
+//         const token = credential.accessToken;
+//         // The signed-in user info.
+//         const userInfo = result.user;
+//         console.log(userInfo)
+//         setUser(userInfo);
         
 
-        // AsyncStorage.setItem('@user', JSON.stringify(userInfo)).then(() => {
-        //   // Data stored successfully, you can navigate to the user's screen or perform other actions here
-        // }).catch((error) => {
-        //   // Handle the error if AsyncStorage fails
-        // });
+//         // AsyncStorage.setItem('@user', JSON.stringify(userInfo)).then(() => {
+//         //   // Data stored successfully, you can navigate to the user's screen or perform other actions here
+//         // }).catch((error) => {
+//         //   // Handle the error if AsyncStorage fails
+//         // });
 
-        // IdP data available using getAdditionalUserInfo(result)
-        // ...
+//         // IdP data available using getAdditionalUserInfo(result)
+//         // ...
 
-      })
-      .catch((error) => {
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // The email of the user's account used.
-        const email = error.customData.email;
-        // The AuthCredential type that was used.
-        const credential = GoogleAuthProvider.credentialFromError(error);
-        // ...
-      });
-  };
+//       })
+//       .catch((error) => {
+//         // Handle Errors here.
+//         const errorCode = error.code;
+//         const errorMessage = error.message;
+//         // The email of the user's account used.
+//         const email = error.customData.email;
+//         // The AuthCredential type that was used.
+//         const credential = GoogleAuthProvider.credentialFromError(error);
+//         // ...
+//       });
+//   };
 
-  // React.useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const querySnapshot = await getDocs(collection(db, "users"));
-  //       const users = [];
+//   // React.useEffect(() => {
+//   //   const fetchData = async () => {
+//   //     try {
+//   //       const querySnapshot = await getDocs(collection(db, "users"));
+//   //       const users = [];
 
-  //       querySnapshot.forEach((documentSnapshot) => {
-  //         users.push({
-  //           ...documentSnapshot.data(),
-  //           key: documentSnapshot.id,
-  //         });
-  //       });
+//   //       querySnapshot.forEach((documentSnapshot) => {
+//   //         users.push({
+//   //           ...documentSnapshot.data(),
+//   //           key: documentSnapshot.id,
+//   //         });
+//   //       });
 
-  //       setUsers(users);
-  //       // setLoading(false);
-  //     } catch (error) {
-  //       // Handle errors here, e.g., set an error state
-  //       console.error("Error fetching data:", error);
-  //     }
-  //   };
+//   //       setUsers(users);
+//   //       // setLoading(false);
+//   //     } catch (error) {
+//   //       // Handle errors here, e.g., set an error state
+//   //       console.error("Error fetching data:", error);
+//   //     }
+//   //   };
 
-  //   fetchData(); // Call the async function here
+//   //   fetchData(); // Call the async function here
 
-  // }, []);
+//   // }, []);
 
-  const onHandleSignup = async () => {
-    try {
-      setloading(true);
-      if (email !== "" && password !== "" && name !== "") {
-        await createUserWithEmailAndPassword(auth, email, password).then(
-          (response) => {
-            const uid = response.user.uid;
-            const data = {
-              name: name,
-              email: email,
-              uid: uid,
-              id: users.length + 1,
-            };
+//   const onHandleSignup = async () => {
+//     try {
+//       setloading(true);
+//       if (email !== "" && password !== "" && name !== "") {
+//         await createUserWithEmailAndPassword(auth, email, password).then(
+//           (response) => {
+//             const uid = response.user.uid;
+//             const data = {
+//               name: name,
+//               email: email,
+//               uid: uid,
+//               id: users.length + 1,
+//             };
 
-            setUser(response.user)
+//             setUser(response.user)
 
-            const userRef = addDoc(collection(db, "users"), data);
-            // userRef.doc(uid).set(data);
-            console.log(data)
-            AsyncStorage.setItem('@user', JSON.stringify(data)).then(() => {
-              // Data stored successfully, you can navigate to the user's screen or perform other actions here
-            }).catch((error) => {
-              // Handle the error if AsyncStorage fails
-              console.error('Error storing data in AsyncStorage:', error);
-            });
-          }
-        );
-      } else {
-        setSignupError("Please enter all the fields");
-      }
-    } catch (error) {
-      setSignupError(error.message);
-    }
+//             const userRef = addDoc(collection(db, "users"), data);
+//             // userRef.doc(uid).set(data);
+//             console.log(data)
+//             AsyncStorage.setItem('@user', JSON.stringify(data)).then(() => {
+//               // Data stored successfully, you can navigate to the user's screen or perform other actions here
+//             }).catch((error) => {
+//               // Handle the error if AsyncStorage fails
+//               console.error('Error storing data in AsyncStorage:', error);
+//             });
+//           }
+//         );
+//       } else {
+//         setSignupError("Please enter all the fields");
+//       }
+//     } catch (error) {
+//       setSignupError(error.message);
+//     }
 
-    return setloading(false);
-  };
+//     return setloading(false);
+//   };
 
-  return (
-    <LinearGradient
-      colors={["rgb(228, 181, 92)", "white"]}
-      style={{
-        flex: 1,
-        width: "100%",
-        paddingHorizontal: 15,
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <View style={styles.centeredContainer}>
-        <View>
-          <Image
-            source={require("./assets/meal-logo.png")}
-            style={styles.logo}
-          />
-        </View>
-        <Text style={styles.mainHeader}>Create new account</Text>
-        <View style={styles.inputField}>
-          <TextInput
-           style={styles.textInput}
-            inputStyle={styles.inputField}
-            placeholder="Enter Fullname"
-            autoCapitalize="words"
-            value={name}
-            placeholderTextColor="#6B6B6B"
-            onChangeText={(text) => setName(text)}
-          />
-          <MaterialIcons name="mail-outline" size={24} color="gray" />
-        </View>
+//   return (
+//     <LinearGradient
+//       colors={["rgb(228, 181, 92)", "white"]}
+//       style={{
+//         flex: 1,
+//         width: "100%",
+//         paddingHorizontal: 15,
+//         flexDirection: "column",
+//         justifyContent: "center",
+//         alignItems: "center",
+//       }}
+//     >
+//       <View style={styles.centeredContainer}>
+//         <View>
+//           <Image
+//             source={require("./assets/meal-logo.png")}
+//             style={styles.logo}
+//           />
+//         </View>
+//         <Text style={styles.mainHeader}>Create new account</Text>
+//         <View style={styles.inputField}>
+//           <TextInput
+//            style={styles.textInput}
+//             inputStyle={styles.inputField}
+//             placeholder="Enter Fullname"
+//             autoCapitalize="words"
+//             value={name}
+//             placeholderTextColor="#6B6B6B"
+//             onChangeText={(text) => setName(text)}
+//           />
+//           <MaterialIcons name="mail-outline" size={24} color="gray" />
+//         </View>
 
-        <View style={styles.inputField}>
-          <TextInput
-           style={styles.textInput}
-            placeholder="Enter email"
-            keyboardType="email-address"
-            value={email}
-            onChangeText={(text) => setEmail(text)}
-          />
-          <MaterialIcons name="mail-outline" size={24} color="gray" />
-        </View>
+//         <View style={styles.inputField}>
+//           <TextInput
+//            style={styles.textInput}
+//             placeholder="Enter email"
+//             keyboardType="email-address"
+//             value={email}
+//             onChangeText={(text) => setEmail(text)}
+//           />
+//           <MaterialIcons name="mail-outline" size={24} color="gray" />
+//         </View>
 
-        <View style={styles.inputField}>
-          <TextInput
-           style={styles.textInput}
-            placeholder="Enter password"
-            value={password}
-            onChangeText={(text) => setPassword(text)}
-          />
-          <MaterialIcons name="mail-outline" size={24} color="gray" />
-        </View>
+//         <View style={styles.inputField}>
+//           <TextInput
+//            style={styles.textInput}
+//             placeholder="Enter password"
+//             value={password}
+//             onChangeText={(text) => setPassword(text)}
+//           />
+//           <MaterialIcons name="mail-outline" size={24} color="gray" />
+//         </View>
 
-        {loading ? (
-          <View>
-            <Text>Loading</Text>
-          </View>
-        ) : (
-          <TouchableOpacity style={styles.login} onPress={onHandleSignup}>
-            <Text style={styles.loginText}>Sign Up</Text>
-          </TouchableOpacity>
-        )}
-        <View><Text>OR</Text></View>
+//         {loading ? (
+//           <View>
+//             <Text>Loading</Text>
+//           </View>
+//         ) : (
+//           <TouchableOpacity style={styles.login} onPress={onHandleSignup}>
+//             <Text style={styles.loginText}>Sign Up</Text>
+//           </TouchableOpacity>
+//         )}
+//         <View><Text>OR</Text></View>
 
-        <TouchableOpacity
-              style={styles.googleButton}
-              onPress={handleGoogleAuth}
-            >
-              <Image
-                source={require("./assets/images/googleIcon.png")}
-                style={{ height: 20, width: 20, left: -10, marginRight: 10 }}
-              />
-              <Text>Sign In with Google</Text>
-            </TouchableOpacity>
+//         <TouchableOpacity
+//               style={styles.googleButton}
+//               onPress={handleGoogleAuth}
+//             >
+//               <Image
+//                 source={require("./assets/images/googleIcon.png")}
+//                 style={{ height: 20, width: 20, left: -10, marginRight: 10 }}
+//               />
+//               <Text>Sign In with Google</Text>
+//             </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={() => navigation.navigate("Login")}
+//         <TouchableOpacity
+//           onPress={() => navigation.navigate("Login")}
          
-        >
-          <Text>Have an account already? Login</Text>
-        </TouchableOpacity>
-      </View>
-    </LinearGradient>
-  );
-}
+//         >
+//           <Text>Have an account already? Login</Text>
+//         </TouchableOpacity>
+//       </View>
+//     </LinearGradient>
+//   );
+// }
