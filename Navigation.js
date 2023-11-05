@@ -2,6 +2,7 @@ import * as React from "react";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import PreferencesScreen from "./screens/PreferenceScreen";
 import ExploreScreen from "./screens/tabScreens/ExploreScreen";
 import HomeScreen from "./screens/tabScreens/HomeScreen";
@@ -36,6 +37,7 @@ import {
   GoogleAuthProvider,
 } from "firebase/auth";
 import { collection, addDoc, getDocs } from "firebase/firestore";
+import PeopleScreen from "./screens/tabScreens/PeopleScreen";
 
 const auth = getAuth();
 const provider = new GoogleAuthProvider();
@@ -258,6 +260,7 @@ export default Navigation;
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+const TopTabs = createMaterialTopTabNavigator();
 
 function HomeStackNavigator() {
   return (
@@ -305,11 +308,32 @@ function TabGroup() {
       })}
     >
       <Tab.Screen name="HomeStack" component={HomeStackNavigator} />
-      <Tab.Screen name="Explore" component={ExploreScreen} />
+      <Tab.Screen name="Explore" component={TopTabsGroups} />
       <Tab.Screen name="Favourite" component={FavouriteScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );
+}
+
+function TopTabsGroups() {
+  return (
+    <TopTabs.Navigator
+      screenOptions={{
+        tabBarLabelStyle: {
+          textTransform: "capitalize",
+          fontWeight: "bold",
+        },
+        tabBarIndicatorStyle: {
+          height: 5,
+          borderRadius: 5,
+          backgroundColor: "#EAAD37",
+        },
+      }}
+    >
+      <TopTabs.Screen name="Recipes" component={ExploreScreen} />
+      <TopTabs.Screen name="People" component={PeopleScreen} />
+    </TopTabs.Navigator>
+  )
 }
 
 function Login() {
