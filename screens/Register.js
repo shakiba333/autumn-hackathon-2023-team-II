@@ -113,12 +113,12 @@ export default function Register() {
   const onHandleSignup = async () => {
     try {
       setloading(true);
-      if (email !== "" && password !== "" && name !== "") {
+      if (email !== "" && password !== "" ) {
         await createUserWithEmailAndPassword(auth, email, password).then(
           (response) => {
             const uid = response.user.uid;
             const data = {
-              name: name,
+              
               email: email,
               uid: uid,
               id: users.length + 1,
@@ -167,18 +167,7 @@ export default function Register() {
           />
         </View>
         <Text style={styles.mainHeader}>Create new account</Text>
-        <View style={styles.inputField}>
-          <TextInput
-           style={styles.textInput}
-            inputStyle={styles.inputField}
-            placeholder="Enter Fullname"
-            autoCapitalize="words"
-            value={name}
-            placeholderTextColor="#6B6B6B"
-            onChangeText={(text) => setName(text)}
-          />
-          <MaterialIcons name="mail-outline" size={24} color="gray" />
-        </View>
+        
 
         <View style={styles.inputField}>
           <TextInput
