@@ -17,3 +17,15 @@ export async function updateProfilePreferences(profileId, preferences) {
         return null;
       }
 }
+
+export async function getAllProfiles() {
+  try {
+    const response = await axios.get(`${backend_url}`, {
+      headers: { "Content-Type": "application/json" },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
