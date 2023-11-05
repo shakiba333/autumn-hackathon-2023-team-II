@@ -29,3 +29,15 @@ export async function getAllProfiles() {
     return null;
   }
 }
+
+export async function addFriend(userId, friendId) {
+  try {
+    const response = await axios.post(`${backend_url}/${userId}/friends/${friendId}`, {
+      headers: { "Content-Type": "application/json" },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
