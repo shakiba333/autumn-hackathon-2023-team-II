@@ -3,9 +3,20 @@ const Profile = require("../models/profile");
 const Group = require("../models/group");
 
 module.exports = {
+  index,
   create,
   show
 };
+
+function index(req, res) {
+  console.log('in user index')
+  User.find({})
+    .populate('profile')
+    .then((users) => res.json(users))
+    .catch((err) => {
+      res.status(500).json(err);
+    });
+}
 
 async function create(req, res) {
   console.log('create a user')

@@ -10,12 +10,39 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import LoadingDots from "react-native-loading-dots";
+import { useFocusEffect } from "@react-navigation/native";
+import { getAllProfiles } from "../../services/profile";
+import { getUser, getAllUsers } from "../../services/user";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const PeopleScreen = () => {
   const [isFocused, setIsFocused] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [people, setPeople] = useState([]);
+  const [user, setUser] = useState(null);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const getProfiles = async () => {
+        try {
+          const token = await AsyncStorage.getItem("@user");
+          const googleInfo = JSON.parse(token);
+          const userAccount = await getUser(googleInfo.email);
+          setUser(userAccount)
+          const allUsers = await getAllUsers()
+          console.log('all:', allUsers)
+          const filteredUsers = allUsers.filter((user) => user._id !== userAccount._id);
+          console.log('filtered:', filteredUsers)
+          setPeople(filteredUsers)
+        } catch (err) {
+          console.log("error with users:", err);
+        }
+      }
+      getProfiles()
+    }, [])
+  );
+
 
   const handleFocus = () => {
     setIsFocused(true);
@@ -27,11 +54,12 @@ const PeopleScreen = () => {
 
   const handleSearchIconClick = async () => {  
     try {
-
+      console.log('people state:', people)
     } catch (error) {
       console.error("Error fetching people:", error);
     }
   };
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -51,7 +79,7 @@ const PeopleScreen = () => {
             value={searchText}
             onChangeText={(text) => setSearchText(text)}
           />
-          <TouchableOpacity onPress={handleSearchIconClick}>
+          <TouchableOpacity>
             <Icon name="search" size={20} style={styles.searchIcon} />
           </TouchableOpacity>
         </View>
@@ -64,7 +92,8 @@ const PeopleScreen = () => {
               />
             </View>
           ) : (
-            <ScrollView contentContainerStyle={styles.scrollRecipeContainer}>
+            <ScrollView contentContainerStyle={styles.scrollPeopleContainer}>
+              {/* map in here */}
             </ScrollView>
           )}
         </View>
@@ -122,7 +151,7 @@ const styles = StyleSheet.create({
     width: "100%",
     flexDirection: "row",
   },
-  scrollRecipeContainer: {
+  scrollPeopleContainer: {
     justifyContent: "center",
     alignItems: "flex-start",
   },
