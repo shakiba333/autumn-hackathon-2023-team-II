@@ -49,7 +49,6 @@ export async function getUser(email) {
 }
 
 export async function getAllUsers() {
-  console.log('in get all users')
   try {
     const response = await axios.get(`${backend_url}`, {
       headers: { "Content-Type": "application/json" },

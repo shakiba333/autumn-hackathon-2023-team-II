@@ -9,7 +9,6 @@ module.exports = {
 };
 
 function index(req, res) {
-  console.log('in user index')
   User.find({})
     .populate('profile')
     .then((users) => res.json(users))

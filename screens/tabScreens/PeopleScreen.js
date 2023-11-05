@@ -7,13 +7,16 @@ import {
   TextInput,
   Text,
   TouchableOpacity,
+  Pressable,
+  Image,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import LoadingDots from "react-native-loading-dots";
 import { useFocusEffect } from "@react-navigation/native";
-import { getAllProfiles } from "../../services/profile";
+import { addFriend, getAllProfiles, deleteFriend } from "../../services/profile";
 import { getUser, getAllUsers } from "../../services/user";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AntDesign } from '@expo/vector-icons';
 
 const PeopleScreen = () => {
   const [isFocused, setIsFocused] = useState(false);
@@ -21,6 +24,7 @@ const PeopleScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [people, setPeople] = useState([]);
   const [user, setUser] = useState(null);
+  const [userFriends, setUserFriends] = useState([])
 
   useFocusEffect(
     React.useCallback(() => {
@@ -31,9 +35,8 @@ const PeopleScreen = () => {
           const userAccount = await getUser(googleInfo.email);
           setUser(userAccount)
           const allUsers = await getAllUsers()
-          console.log('all:', allUsers)
+          setUserFriends(userAccount.profile.friends)
           const filteredUsers = allUsers.filter((user) => user._id !== userAccount._id);
-          console.log('filtered:', filteredUsers)
           setPeople(filteredUsers)
         } catch (err) {
           console.log("error with users:", err);
@@ -52,14 +55,25 @@ const PeopleScreen = () => {
     setIsFocused(false);
   };
 
-  const handleSearchIconClick = async () => {  
+  const handleAddFriend = async (person) => {
     try {
-      console.log('people state:', people)
+      const updatedUserFriends = [...userFriends, person._id];
+      setUserFriends(updatedUserFriends);
+      await addFriend(user._id, person._id);
     } catch (error) {
-      console.error("Error fetching people:", error);
+      console.error("Error adding a friend:", error);
     }
   };
 
+  const handleDeleteFriend = async (person) => {
+    try {
+      const updatedUserFriends = userFriends.filter((friendId) => friendId !== person._id);
+      setUserFriends(updatedUserFriends);
+      await deleteFriend(user._id, person._id);
+    } catch (error) {
+      console.error("Error adding a friend:", error);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -93,7 +107,31 @@ const PeopleScreen = () => {
             </View>
           ) : (
             <ScrollView contentContainerStyle={styles.scrollPeopleContainer}>
-              {/* map in here */}
+              {people && people.map((person, index) => (
+                <Pressable key={index} 
+                  style={({ pressed }) => [
+                    styles.personContainer,
+                    {
+                      backgroundColor: pressed ? "#f0f0f0" : "transparent",
+                    },
+                  ]}
+                  onPress={() =>
+                    userFriends.includes(person._id)
+                      ? handleDeleteFriend(person)
+                      : handleAddFriend(person)
+                  }
+                >
+                  <View style={styles.personInfo}>
+                    <Image source={require('../../assets/images/placeholder.png')} style={styles.personImage}/>
+                    <Text style={styles.personLabel}>{person.name}</Text>
+                  </View>
+                  {userFriends.includes(person._id) ? (
+                    <AntDesign name="checkcircle" size={24} color="green" />
+                  ) : (
+                    <AntDesign name="adduser" size={24} color="black" />
+                  )}
+                </Pressable>
+              ))}
             </ScrollView>
           )}
         </View>
@@ -153,8 +191,33 @@ const styles = StyleSheet.create({
   },
   scrollPeopleContainer: {
     justifyContent: "center",
-    alignItems: "flex-start",
+    alignItems: "center",
+    gap: 10
   },
+  personContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: 300, 
+    justifyContent: "space-between",
+    paddingHorizontal: 10,
+    paddingVertical: 5
+  },
+  personInfo: {
+    flexDirection: "row",
+    gap: 20,
+    alignItems: 'center' 
+  },
+  personImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 100,
+  },
+  personLabel: {
+      fontSize: 18,
+      fontFamily: 'Poppins',
+      fontWeight: '500',
+      color: '#000'
+  }
 });
 
 export default PeopleScreen;
