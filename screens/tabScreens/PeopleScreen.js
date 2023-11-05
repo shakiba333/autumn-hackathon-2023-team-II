@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   SafeAreaView,
   ScrollView,
@@ -21,8 +21,9 @@ import { AntDesign } from '@expo/vector-icons';
 const PeopleScreen = () => {
   const [isFocused, setIsFocused] = useState(false);
   const [searchText, setSearchText] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [people, setPeople] = useState([]);
+  const [searchedPeople, setSearchedPeople] = useState([]);
   const [user, setUser] = useState(null);
   const [userFriends, setUserFriends] = useState([])
 
@@ -38,6 +39,8 @@ const PeopleScreen = () => {
           setUserFriends(userAccount.profile.friends)
           const filteredUsers = allUsers.filter((user) => user._id !== userAccount._id);
           setPeople(filteredUsers)
+          setSearchedPeople(people)
+          setIsLoading(false)
         } catch (err) {
           console.log("error with users:", err);
         }
@@ -75,6 +78,13 @@ const PeopleScreen = () => {
     }
   };
 
+  useEffect(() => {
+    const filteredPeople = people.filter((person) =>
+      person.name.toLowerCase().includes(searchText.toLowerCase())
+    );
+    setSearchedPeople(filteredPeople);
+  }, [searchText, people]);
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -107,7 +117,7 @@ const PeopleScreen = () => {
             </View>
           ) : (
             <ScrollView contentContainerStyle={styles.scrollPeopleContainer}>
-              {people && people.map((person, index) => (
+              {searchedPeople && searchedPeople.map((person, index) => (
                 <Pressable key={index} 
                   style={({ pressed }) => [
                     styles.personContainer,
