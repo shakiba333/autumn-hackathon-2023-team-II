@@ -347,26 +347,26 @@ function TopTabsGroups() {
   )
 }
 
-function TopTabsGroups() {
-  return (
-    <TopTabs.Navigator
-      screenOptions={{
-        tabBarLabelStyle: {
-          textTransform: "capitalize",
-          fontWeight: "bold",
-        },
-        tabBarIndicatorStyle: {
-          height: 5,
-          borderRadius: 5,
-          backgroundColor: "#EAAD37",
-        },
-      }}
-    >
-      <TopTabs.Screen name="Recipes" component={ExploreScreen} />
-      <TopTabs.Screen name="People" component={PeopleScreen} />
-    </TopTabs.Navigator>
-  )
-}
+// function TopTabsGroups() {
+//   return (
+//     <TopTabs.Navigator
+//       screenOptions={{
+//         tabBarLabelStyle: {
+//           textTransform: "capitalize",
+//           fontWeight: "bold",
+//         },
+//         tabBarIndicatorStyle: {
+//           height: 5,
+//           borderRadius: 5,
+//           backgroundColor: "#EAAD37",
+//         },
+//       }}
+//     >
+//       <TopTabs.Screen name="Recipes" component={ExploreScreen} />
+//       <TopTabs.Screen name="People" component={PeopleScreen} />
+//     </TopTabs.Navigator>
+//   )
+// }
 
 // function Login() {
 //   const [email, setEmail] = React.useState("");
@@ -423,24 +423,24 @@ function TopTabsGroups() {
 //           // Add other user data as needed
 //         };
 
-        setUser(user.user)
+        // setUser(user.user)
   
-        // Save user data to local storage
-        await AsyncStorage.setItem('@user', JSON.stringify(user));
+        // // Save user data to local storage
+        // await AsyncStorage.setItem('@user', JSON.stringify(user));
   
         // After saving the user data, you can navigate to the user's screen or perform other actions
         // Here is where you would navigate to the user's screen or handle the successful login.
         // For example, you can use navigation libraries like React Navigation to navigate to another screen.
   
-      } else {
-        setLoginError("Please enter all the fields");
-      }
-    } catch (error) {
-      setLoginError(error.message);
-    }
+  //     } else {
+  //       setLoginError("Please enter all the fields");
+  //     }
+  //   } catch (error) {
+  //     setLoginError(error.message);
+  //   }
   
-    setloading(false);
-  };
+  //   setloading(false);
+  // };
 
 //   return (
 //     <LinearGradient
