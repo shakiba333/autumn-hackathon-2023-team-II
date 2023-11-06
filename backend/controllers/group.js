@@ -1,5 +1,6 @@
 const Group = require("../models/group");
 const Meal = require("../models/meal");
+const Profile = require('../models/profile')
 
 module.exports = {
   createGroup,
@@ -14,12 +15,39 @@ module.exports = {
 
 async function createGroup(req, res) {
   try {
-    const group = await Group.create(req.body);
-    res.status(201).json(group);
+    const { name, recipes, people, profileId } = req.body;
+
+    const mealReferences = [];
+    for (const recipe of recipes) {
+      const newMeal = new Meal(recipe);
+
+      const savedMeal = await newMeal.save();
+      mealReferences.push(savedMeal._id);
+    }
+
+    const friendReferences = []
+    for (const person of people) {
+      friendReferences.push(person._id)
+    }
+
+    const newGroup = new Group({
+      name,
+      meals: mealReferences, 
+      people: friendReferences
+    });
+
+    const savedGroup = await newGroup.save();
+
+    const userProfile = await Profile.findById(profileId)
+    userProfile.groups.push(newGroup._id)
+    await userProfile.save()
+    res.json(savedGroup);
+
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }
 }
+
 
 async function index(req, res) {
   try {

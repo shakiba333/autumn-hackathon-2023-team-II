@@ -8,14 +8,14 @@ import {
   findMealByEdamamId,
   deleteMealByEdamamId,
 } from "../services/meal";
-import { updateGroupMeals } from "../services/group";
+import { createGroup, updateGroupMeals } from "../services/group";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
 import LoadingScreen from "./LoadingScreen";
 
-function Suggestions({ selectedMeal, selectedFriends }) {
+function Suggestions({ userProfile, selectedMeal, selectedFriends }) {
   const [recipes, setRecipes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const iconName = "add-circle";
@@ -35,8 +35,8 @@ function Suggestions({ selectedMeal, selectedFriends }) {
   const [deleteMeal, setDeleteMeal] = useState();
 
   useEffect(() => {
-    console.log("selected was", selectedMeal);
-    console.log(selectedFriends)
+    // console.log("selected was", selectedMeal);
+    // console.log(selectedFriends)
     let edamamApiUrl;
     const edamamAppId = process.env.REACT_APP_EDAMAM_APP_ID;
     const edamamApiKey = process.env.REACT_APP_EDAMAM_API_KEY;
@@ -55,12 +55,46 @@ function Suggestions({ selectedMeal, selectedFriends }) {
         const recipeData = response.data.hits || [];
         if (recipeData.length < 6) {
           setRecipes(recipeData);
+          const formattedRecipeData = recipeData.map((recipe) => ({
+            api_id: recipe.recipe.uri ? recipe.recipe.uri.split("_")[1] : "",
+            uri: recipe.recipe.uri,
+            label: recipe.recipe.label,
+            cuisineType: recipe.recipe.cuisineType,
+            numberOfIngredients: recipe.recipe.ingredients.length,
+            totalTime: recipe.recipe.totalTime,
+            shareAs: recipe.recipe.shareAs,
+            image: recipe.recipe.image,
+          }));
+          const groupData = {
+            recipes: formattedRecipeData,
+            people: selectedFriends,
+            name: "",
+            profileId: userProfile._id
+          };
+          createGroup(groupData)
         } else {
           let randomNumber = Math.floor(Math.random() * recipeData.length);
           randomNumber = randomNumber < 4 ? 4 : randomNumber;
           const sliceEnd = randomNumber;
           const sliceStart = randomNumber - 4;
           setRecipes(recipeData.slice(sliceStart, sliceEnd));
+          const formattedRecipeData = recipeData.map((recipe) => ({
+            api_id: recipe.recipe.uri ? recipe.recipe.uri.split("_")[1] : "",
+            uri: recipe.recipe.uri,
+            label: recipe.recipe.label,
+            cuisineType: recipe.recipe.cuisineType,
+            numberOfIngredients: recipe.recipe.ingredients.length,
+            totalTime: recipe.recipe.totalTime,
+            shareAs: recipe.recipe.shareAs,
+            image: recipe.recipe.image,
+          }));
+          const groupData = {
+            recipes: formattedRecipeData.slice(sliceStart, sliceEnd),
+            people: selectedFriends,
+            name: "",
+            profileId: userProfile._id
+          };
+          createGroup(groupData)
         }
         setTimeout(() => setIsLoading(false), 3000);
       })
