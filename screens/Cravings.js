@@ -79,7 +79,7 @@ function Cravings({ navigation }) {
           </TouchableOpacity>
         </>
       )}
-      {currentStep === 3 && <Suggestions selectedMeal={selectedMeal} selectedFriends={selectedFriends} />}
+      {currentStep === 3 && <Suggestions userProfile={userProfile} selectedMeal={selectedMeal} selectedFriends={selectedFriends} />}
     </SafeAreaView>
   );
 }  

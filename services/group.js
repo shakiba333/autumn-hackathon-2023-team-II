@@ -58,3 +58,15 @@ export async function deleteFavoriteMeal(groupId, mealId) {
     return null;
   }
 }
+
+export async function createGroup(group) {
+  try {
+    const response = await axios.post(`${backend_url}`, group, {
+      headers: { "Content-Type": "application/json" },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
