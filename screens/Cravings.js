@@ -4,10 +4,16 @@ import { SafeAreaView, Text, View, TouchableOpacity, Image, StyleSheet } from "r
 import AddMembersScreen from "./AddMembersScreen";
 import { Ionicons } from '@expo/vector-icons';
 import Suggestions from "./Suggestions";
+import { getUserProfile } from "../services/profile";
+import { useFocusEffect } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function Cravings({ navigation }) {
   const [selectedMeal, setSelectedMeal] = useState(null);
   const [currentStep, setCurrentStep] = useState(1);
+  const [userProfile, setUserProfile] = useState(null);
+  const [userFriends, setUserFriends] = useState([]);
+  const [selectedFriends, setSelectedFriends] = useState([])
   
   const mealTypes = [
     { label: "Breakfast", image: require('../assets/images/breakfast.jpg') },
@@ -17,7 +23,22 @@ function Cravings({ navigation }) {
     { label: "Teatime", image: require('../assets/images/teatime.jpg') },
   ];
   
-
+  useFocusEffect(
+    React.useCallback(() => {
+      const getProfile = async () => {
+        try {
+          const token = await AsyncStorage.getItem("@user");
+          const googleInfo = JSON.parse(token);
+          const userProfile = await getUserProfile(googleInfo.email);
+          setUserProfile(userProfile)
+          setUserFriends(userProfile.friends)
+        } catch (err) {
+          console.log("error with profile:", err);
+        }
+      }
+      getProfile()
+    }, [])
+  );
 
   const handleMealSelection = (mealType) => {
     console.log(mealType.label);
@@ -26,7 +47,7 @@ function Cravings({ navigation }) {
   };
 
   const getSuggestions = () => {
-    setCurrentStep(currentStep + 1);;
+    setCurrentStep(currentStep + 1);
   }
 
   return (
@@ -51,14 +72,14 @@ function Cravings({ navigation }) {
       )}
       {currentStep === 2 && (
         <>
-          <AddMembersScreen />
+          <AddMembersScreen friends={userFriends} selectedFriends={selectedFriends} setSelectedFriends={setSelectedFriends} />
           <TouchableOpacity style={styles.submitButton} onPress={() => getSuggestions()}>
             <Text style={styles.submitButtonText}>Get Suggestions</Text>
             <Ionicons name="arrow-forward" size={24} color="white" />
           </TouchableOpacity>
         </>
       )}
-      {currentStep === 3 && <Suggestions selectedMeal={selectedMeal}/>}
+      {currentStep === 3 && <Suggestions selectedMeal={selectedMeal} selectedFriends={selectedFriends} />}
     </SafeAreaView>
   );
 }  

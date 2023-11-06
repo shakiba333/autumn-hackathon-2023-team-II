@@ -4,15 +4,16 @@ import { ScrollView } from 'react-native-gesture-handler'
 import { AntDesign } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 
-const AddMembersScreen = ({ onComplete }) => {
-    const [selectedFriends, setSelectedFriends] = useState([])
-    const friends = [
-        { name: "Mary", image: require('../assets/images/mary.jpg') },
-        { name: "Joe", image: require('../assets/images/joe.jpg') },
-        { name: "Mark", image: require('../assets/images/mark.jpg') },
-        { name: "John", image: require('../assets/images/john.jpg') },
-        { name: "Steph", image: require('../assets/images/steph.jpg') },
-      ];
+const AddMembersScreen = ({ friends, setSelectedFriends, selectedFriends}) => {
+
+    const handleFriendClick = (friend) => {
+        if (!selectedFriends.includes(friend)) {
+            setSelectedFriends([...selectedFriends, friend]);
+        } else {
+            const updatedFriends = selectedFriends.filter((selectedFriend) => selectedFriend !== friend);
+            setSelectedFriends(updatedFriends);
+        }
+    };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -21,9 +22,9 @@ const AddMembersScreen = ({ onComplete }) => {
             </Text>
         <ScrollView contentContainerStyle={styles.scrollContainer}>
             {friends.map((friend, index) => (
-                <TouchableOpacity key={index} style={styles.friendContainer}>
+                <TouchableOpacity key={index} style={styles.friendContainer} onPress={() => handleFriendClick(friend)}>
                     <View style={styles.friendInfo}>
-                        <Image source={friend.image} style={styles.friendImage} />
+                        <Image source={require('../assets/images/placeholder.png')} style={styles.friendImage} />
                         <Text style={styles.friendLabel}>{friend.name}</Text>
                     </View>
                     {selectedFriends.includes(friend) ? (
@@ -50,7 +51,7 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         alignItems: 'center',
         // justifyContent: 'center',
-        gap: 40
+        gap: 30
     },
     heading: {
       fontSize: 20,
@@ -68,7 +69,7 @@ const styles = StyleSheet.create({
     },
     friendInfo: {
         flexDirection: "row",
-        gap: 20,
+        gap: 15,
         alignItems: 'center' 
     },
     friendImage: {

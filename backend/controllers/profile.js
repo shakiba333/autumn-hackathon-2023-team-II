@@ -38,8 +38,13 @@ async function update(req, res) {
 
 async function showOne(req, res) {
   try {
-    const profile = await Profile.findById(req.params.id).populate("groups");
-    return res.status(200).json(profile);
+    const user = await User.findOne({ email: req.params.id }).populate({
+      path: 'profile',
+      populate: {
+        path: 'friends',
+      },
+    });
+    res.json(user.profile)
   } catch (err) {
     return res.status(500).json(err);
   }
