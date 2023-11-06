@@ -15,7 +15,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import LoadingScreen from "./LoadingScreen";
 
-function Suggestions({ selectedMeal }) {
+function Suggestions({ selectedMeal, selectedFriends }) {
   const [recipes, setRecipes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const iconName = "add-circle";
@@ -30,13 +30,13 @@ function Suggestions({ selectedMeal }) {
     numberOfIngredients: 0,
     totalTime: 0,
     shareAs: "",
-    date: "",
-    time: "",
+    image: ""
   });
   const [deleteMeal, setDeleteMeal] = useState();
 
   useEffect(() => {
     console.log("selected was", selectedMeal);
+    console.log(selectedFriends)
     let edamamApiUrl;
     const edamamAppId = process.env.REACT_APP_EDAMAM_APP_ID;
     const edamamApiKey = process.env.REACT_APP_EDAMAM_API_KEY;
@@ -53,7 +53,6 @@ function Suggestions({ selectedMeal }) {
       .get(edamamApiUrl)
       .then((response) => {
         const recipeData = response.data.hits || [];
-        console.log(recipeData.length, "length");
         if (recipeData.length < 6) {
           setRecipes(recipeData);
         } else {
@@ -61,7 +60,6 @@ function Suggestions({ selectedMeal }) {
           randomNumber = randomNumber < 4 ? 4 : randomNumber;
           const sliceEnd = randomNumber;
           const sliceStart = randomNumber - 4;
-          console.log(sliceEnd, sliceStart);
           setRecipes(recipeData.slice(sliceStart, sliceEnd));
         }
         setTimeout(() => setIsLoading(false), 3000);
@@ -130,7 +128,6 @@ function Suggestions({ selectedMeal }) {
       setShouldDeleteMeal(true);
     }
   };
-  console.log(selectedRecipes);
 
   if (isLoading) {
     return <LoadingScreen />;
